@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<company>
+    <staff>
+        <firstname>yong</firstname>
+        <lastname>mook kim</lastname>
+        <salary>100000</salary>
+    </staff>
+    <staff>
+        <firstname>low</firstname>
+        <lastname>yin fong</lastname>
+        <salary>200000</salary>
+    </staff>
+</company>
