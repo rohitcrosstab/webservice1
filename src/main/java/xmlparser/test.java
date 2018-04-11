@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -563,6 +564,184 @@ public class test {
 		}
 		return Response.status(200).entity("testinomial is uploaded successfully to sqlexpress database").build();
 	}
+	@Path("consultant/testinomial_delete/{id}")
+	@GET
+
+	@Produces(MediaType.TEXT_HTML)
+	public String consultant_table2(@PathParam ("id") int id) {
+		String content = null;
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+		
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			PreparedStatement stmt = con.prepareStatement("delete from consultant_emp_speak where id="+id);
+			stmt.executeUpdate();
+			String query = ("select * from consultant_emp_speak");
+			Statement pstmt = con.createStatement();
+			ResultSet rs = pstmt.executeQuery(query);
+			while (rs.next()){ 
+			
+				byte[] bytes = rs.getBytes("image");
+			byte[] encoded = Base64.encodeBase64(bytes);
+			String encodedString = new String(encoded);	
+				content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," +encodedString+ "' width='100px' height='100px' alt=''/></td>"
+						+ "<td class='2'>" + rs.getString("name") + "</td>" + "<td class='3'>" + rs.getString("designation") + "<td class='4'>"
+						+ rs.getString("quote") + "</td>"
+								+ " <td><button type='button' class='edit'data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"+ rs.getString(1) + "');\"><i class='fa fa-pencil'></i></button>&nbsp;&nbsp;&nbsp;<button type='button' class='edits'onclick=\"delete_row('"+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>"
+								+"</tr>";
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return content;
+	}
+	/*@Path("consultant/testinomial_update/{id}")
+	@GET
+
+	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
+		MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
+@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+		MediaType.TEXT_HTML })
+public String consultants(@FormDataParam("image") InputStream fileInputStream,
+		@FormDataParam("image") FormDataContentDisposition fileInputDetails, @FormDataParam("name") String enames,
+		@FormDataParam("dsgn") String dsgn, @FormDataParam("quote") String equote, @PathParam ("id") int id) {
+		String content = null;
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+		
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			PreparedStatement stmt = con.prepareStatement("update name, designation, quote, image from consultant_emp_speak where id="+id);
+			stmt.setString(1, enames);
+			stmt.setString(2, dsgn);
+			stmt.setString(3, equote);
+			stmt.setBinaryStream(4, fileInputStream);
+
+			stmt.executeUpdate();
+		
+			String query = ("select * from consultant_emp_speak");
+			Statement pstmt = con.createStatement();
+			ResultSet rs = pstmt.executeQuery(query);
+			while (rs.next()){ 
+			
+				byte[] bytes = rs.getBytes("image");
+			byte[] encoded = Base64.encodeBase64(bytes);
+			String encodedString = new String(encoded);	
+				content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," +encodedString+ "' width='100px' height='100px' alt=''/></td>"
+						+ "<td class='2'>" + rs.getString("name") + "</td>" + "<td class='3'>" + rs.getString("designation") + "<td class='4'>"
+						+ rs.getString("quote") + "</td>"
+								+ " <td><button type='button' class='edit' data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"+ rs.getString(1) + "');\"><i class='fa fa-pencil'></i></button>&nbsp;&nbsp;&nbsp;<button type='button' class='edits' onclick=\"delete_row('"+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>"
+								+"</tr>";
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return content;
+	}*/
+	@Path("consultant/testinomial")
+	@GET
+
+	@Produces(MediaType.TEXT_HTML)
+	public String consultant_table() {
+		String content = null;
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+		
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			String query = ("select * from consultant_emp_speak");
+			Statement pstmt = con.createStatement();
+			ResultSet rs = pstmt.executeQuery(query);
+			while (rs.next()){ 
+			
+				byte[] bytes = rs.getBytes("image");
+			byte[] encoded = Base64.encodeBase64(bytes);
+			String encodedString = new String(encoded);	
+				content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," +encodedString+ "' width='100px' height='100px' alt=''/></td>"
+						+ "<td class='2'>" + rs.getString("name") + "</td>" + "<td class='3'>" + rs.getString("designation") + "<td class='4'>"
+						+ rs.getString("quote") + "</td>"
+								+ " <td><button type='button'data-toggle='modal' data-target='#myModal' class='edit' onclick=\"edit_row('"+ rs.getString(1) + "');\"><i class='fa fa-pencil'></i></button>&nbsp;&nbsp;&nbsp;<button type='button' class='edits'onclick=\"delete_row('"+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>"
+								+"</tr>";
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return content;
+	}
+	@Path("consultant/testinomial_owl")
+	@GET
+
+	@Produces(MediaType.TEXT_HTML)
+	public Response consultant_table1() {
+		JSONArray jArrays = new JSONArray();
+		try {
+		
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+		
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			String query = ("select name, designation, quote, image from consultant_emp_speak");
+			Statement pstmt = con.createStatement();
+			ResultSet rs = pstmt.executeQuery(query);
+			while (rs.next()){ 
+			
+				byte[] bytes = rs.getBytes("image");
+			byte[] encoded = Base64.encodeBase64(bytes);
+			String encodedString = new String(encoded);	
+			JSONObject jObjects = new JSONObject();
+			jObjects.put("empnames", rs.getString("name"));
+			jObjects.put("empdesg", rs.getString("designation"));
+			jObjects.put("empquote", rs.getString("quote"));
+			jObjects.put("photo", encodedString);
+			jArrays.put(jObjects);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Response.status(200).entity(jArrays.toString()).build();
+	}
+	@Path("consultant/table")
+	@POST
+
+	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
+	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.TEXT_HTML })
+	public Response consultant(@FormDataParam("image") InputStream fileInputStream,
+			@FormDataParam("image") FormDataContentDisposition fileInputDetails, @FormDataParam("name") String enames,
+			@FormDataParam("dsgn") String dsgn, @FormDataParam("quote") String equote) throws URISyntaxException {
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			String query = ("insert into consultant_emp_speak(name,designation,quote,image) VALUES(?,?,?,?)");
+			PreparedStatement pstmt = con.prepareStatement(query);
+			pstmt.setString(1, enames);
+			pstmt.setString(2, dsgn);
+			pstmt.setString(3, equote);
+			pstmt.setBinaryStream(4, fileInputStream);
+
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		java.net.URI location = new java.net.URI("http://localhost:8008/xmlparser2/test.html");
+		return Response.temporaryRedirect(location).build();
+	}
 
 	@Path("/testinomialjson")
 	@GET
@@ -578,7 +757,7 @@ public class test {
 			Statement st = con.createStatement();
 			ResultSet rs = st.executeQuery("select emp_name,emp_quote from testinomial;");
 			while (rs.next()) {
-
+				
 				JSONObject jObject = new JSONObject();
 
 				jObject.put("col1", rs.getString(1));
@@ -614,7 +793,7 @@ public class test {
 				byte[] bytes = rs.getBytes("photo");
 				byte[] encoded = Base64.encodeBase64(bytes);
 				String encodedString = new String(encoded);
-
+				
 				JSONObject jObjects = new JSONObject();
 				jObjects.put("empnames", rs.getString(1));
 				jObjects.put("empquote", rs.getString(2));
@@ -633,81 +812,81 @@ public class test {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response fulljson() {
-		 JSONObject jObject = new JSONObject();
-			JSONArray jArrays = new JSONArray();
-			try {
-				
-				Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-				String connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" + "database=jubilant;" + "user=sa;"
-						+ "password=rohit@crosstab";
-				Connection con = DriverManager.getConnection(connectionUrl);
-				System.out.println("Connected.");
-				Statement st = con.createStatement();
-				JSONObject jObjects = new JSONObject();
-				ResultSet rs1 = st.executeQuery("select * from emp_details_basic");			
-				while (rs1.next()) {
-					jObjects.put("name_type", rs1.getString("NAME_TYPE"));
-					jObjects.put("first_name", rs1.getString("FIRST_NAME"));
-					jObjects.put("last_name", rs1.getString("LAST_NAME"));
-				}		ResultSet rs2 = st.executeQuery("select * from emp_details_address");
-				while (rs2.next()) {
-					jObjects.put("addr2", rs2.getString("ADDRESS2"));
-					jObjects.put("addr3", rs2.getString("ADDRESS3"));
-					jObjects.put("addr4", rs2.getString("ADDRESS4"));
-					jObjects.put("country", rs2.getString("COUNTRY"));
-					jObjects.put("state", rs2.getString("STATE"));
-					jObjects.put("city", rs2.getString("CITY"));
-					jObjects.put("postal", rs2.getString("POSTAL"));
-				}
-				ResultSet rs3 = st.executeQuery("select * from emp_details_contact");
-				while (rs3.next()) {
-					jObjects.put("country_code", rs3.getString("COUNTRY_CODE"));
-					jObjects.put("phone", rs3.getString("PHONE"));
-					jObjects.put("email", rs3.getString("EMAIL_ADDR"));
-				}
-				ResultSet rs4 = st.executeQuery("select * from emp_details_basic_2");
-				while (rs4.next()) {
-					jObjects.put("exp_year", rs4.getString("J_EXP_YEAR"));
-					jObjects.put("exp_month", rs4.getString("J_EXP_MONTH"));				
-					jObjects.put("post_grad", rs4.getString("J_POST_GRID"));
-					jObjects.put("grad", rs4.getString("J_GRADUATION"));
-					jObjects.put("industry", rs4.getString("J_INDUSTRY"));
-					jObjects.put("functional_area", rs4.getString("J_FUNCTIONAL_AREA"));
-				}
-				ResultSet rs5 = st.executeQuery("select * from emp_details_works");
+		JSONObject jObject = new JSONObject();
+		JSONArray jArrays = new JSONArray();
+		try {
 
-				while (rs5.next()) {
-					jObjects.put("company", rs5.getString("EMPLOYER"));
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohit@crosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			Statement st = con.createStatement();
+			JSONObject jObjects = new JSONObject();
+			ResultSet rs1 = st.executeQuery("select * from emp_details_basic");
+			while (rs1.next()) {
+				jObjects.put("name_type", rs1.getString("NAME_TYPE"));
+				jObjects.put("first_name", rs1.getString("FIRST_NAME"));
+				jObjects.put("last_name", rs1.getString("LAST_NAME"));
+			}
+			ResultSet rs2 = st.executeQuery("select * from emp_details_address");
+			while (rs2.next()) {
+				jObjects.put("addr2", rs2.getString("ADDRESS2"));
+				jObjects.put("addr3", rs2.getString("ADDRESS3"));
+				jObjects.put("addr4", rs2.getString("ADDRESS4"));
+				jObjects.put("country", rs2.getString("COUNTRY"));
+				jObjects.put("state", rs2.getString("STATE"));
+				jObjects.put("city", rs2.getString("CITY"));
+				jObjects.put("postal", rs2.getString("POSTAL"));
+			}
+			ResultSet rs3 = st.executeQuery("select * from emp_details_contact");
+			while (rs3.next()) {
+				jObjects.put("country_code", rs3.getString("COUNTRY_CODE"));
+				jObjects.put("phone", rs3.getString("PHONE"));
+				jObjects.put("email", rs3.getString("EMAIL_ADDR"));
+			}
+			ResultSet rs4 = st.executeQuery("select * from emp_details_basic_2");
+			while (rs4.next()) {
+				jObjects.put("exp_year", rs4.getString("J_EXP_YEAR"));
+				jObjects.put("exp_month", rs4.getString("J_EXP_MONTH"));
+				jObjects.put("post_grad", rs4.getString("J_POST_GRID"));
+				jObjects.put("grad", rs4.getString("J_GRADUATION"));
+				jObjects.put("industry", rs4.getString("J_INDUSTRY"));
+				jObjects.put("functional_area", rs4.getString("J_FUNCTIONAL_AREA"));
+			}
+			ResultSet rs5 = st.executeQuery("select * from emp_details_works");
+
+			while (rs5.next()) {
+				jObjects.put("company", rs5.getString("EMPLOYER"));
 				jObjects.put("jobtitle", rs5.getString("ENDING_TITLE"));
 				jObjects.put("start_date", rs5.getString("START_DT"));
-					jObjects.put("end_date", rs5.getString("END_DT"));
-					jObjects.put("salary", rs5.getString("J_CURRENT_SALARY"));
-					jObjects.put("currency", rs5.getString("CURRENCY"));
-				}
-			ResultSet rs6 = st.executeQuery("select * from emp_details_edu");
-			JSONArray jarr=new JSONArray();
-	while (rs6.next()) {
-		
-		JSONObject objedu=new JSONObject();
-		objedu.put("cat_type", rs6.getString("JPM_CAT_TYPE"));
-		objedu.put("institution", rs6.getString("SCHOOL_CODE"));
-		objedu.put("passing_year", rs6.getString("JPM_INTEGER_2"));
-		objedu.put("country_edu", rs6.getString("COUNTRY_EDU"));
-		objedu.put("course_type", rs6.getString("TYPE_OF_STUDY_GER"));
-		objedu.put("degree", rs6.getString("JPM_CAT_ITEM_ID"));
-		objedu.put("branch", rs6.getString("MAJOR_CODE"));
-		objedu.put("cgpa", rs6.getString("JPM_DECIMAL_1"));
-		jarr.put(objedu);
-					
-					
-				}
-
-	jObject.put("edu",jarr);
-	jObject.put("basic",jObjects);		
-			} catch (Exception e) {
-				e.printStackTrace();
+				jObjects.put("end_date", rs5.getString("END_DT"));
+				jObjects.put("salary", rs5.getString("J_CURRENT_SALARY"));
+				jObjects.put("currency", rs5.getString("CURRENCY"));
 			}
-			System.out.println(jObject.toString());
+			ResultSet rs6 = st.executeQuery("select * from emp_details_edu");
+			JSONArray jarr = new JSONArray();
+			while (rs6.next()) {
+
+				JSONObject objedu = new JSONObject();
+				objedu.put("cat_type", rs6.getString("JPM_CAT_TYPE"));
+				objedu.put("institution", rs6.getString("SCHOOL_CODE"));
+				objedu.put("passing_year", rs6.getString("JPM_INTEGER_2"));
+				objedu.put("country_edu", rs6.getString("COUNTRY_EDU"));
+				objedu.put("course_type", rs6.getString("TYPE_OF_STUDY_GER"));
+				objedu.put("degree", rs6.getString("JPM_CAT_ITEM_ID"));
+				objedu.put("branch", rs6.getString("MAJOR_CODE"));
+				objedu.put("cgpa", rs6.getString("JPM_DECIMAL_1"));
+				jarr.put(objedu);
+
+			}
+
+			jObject.put("edu", jarr);
+			jObject.put("basic", jObjects);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(jObject.toString());
 		return Response.status(200).entity(jObject.toString()).build();
 	}
 
