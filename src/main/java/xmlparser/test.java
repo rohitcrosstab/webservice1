@@ -8,12 +8,23 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+
+
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
@@ -31,6 +42,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Properties;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -420,7 +432,7 @@ public class test {
 			@FormParam("institutename") String institute, @FormParam("passingyear") String passyear,
 			@FormParam("course_type") String coursetype, @FormParam("country") String countryedu,
 			@FormParam("degree") String degree, @FormParam("branch") String branch, @FormParam("score") String cgpa,
-			@FormParam("edu_arr") String edu_arr) {
+			@FormParam("edu_arr") String edu_arr, @FormParam("work_arr") String work_arr) {
 
 		try {
 
@@ -473,21 +485,30 @@ public class test {
 			pstmt3.setString(5, emailid);
 			pstmt3.setString(6, emailflag);
 			pstmt3.executeUpdate();
-			String query4 = ("if exists(select * from emp_details_works where USER_ID = '1') update emp_details_works set EMPLOYER = '"
-					+ currentorg + "', ENDING_TITLE='" + jobtitle + "', START_DT='" + startdt + "', END_DT='" + enddt
-					+ "', J_CURRENT_SALARY='" + salary + "', CURRENCY='" + currency + "'"
-					+ " where USER_ID = '1' else insert into emp_details_works (HRS_PROFILE_SEQ,EMPLOYER,ENDING_TITLE,START_DT,END_DT,J_CURRENT_SALARY,CURRENCY)values(?,?,?,?,?,?,?)");
+			
+			String query4 = ("insert into emp_details_works (HRS_PROFILE_SEQ,EMPLOYER,ENDING_TITLE,START_DT,END_DT,J_CURRENT_SALARY,CURRENCY)values(?,?,?,?,?,?,?)");
 			PreparedStatement pstmt4 = con.prepareStatement(query4);
+			JSONArray jsonArrays = new JSONArray(work_arr);
+			for (int i1 = 0; i1 < jsonArrays.length(); i1++) {
+				int users = 1;
+				JSONObject objs = jsonArrays.getJSONObject(i1);
+				String employer1 = objs.getString("employer");
+				String endingtitle1 = objs.getString("endingttile");
+				String start1 = objs.getString("satrtdt");
+				String end1 = objs.getString("enddt");
+				String current1 = objs.getString("currsal");
+				String currency1 = objs.getString("curr");
 			String proseq = "90001";
 
 			pstmt4.setString(1, proseq);
-			pstmt4.setString(2, currentorg);
-			pstmt4.setString(3, jobtitle);
-			pstmt4.setString(4, startdt);
-			pstmt4.setString(5, enddt);
-			pstmt4.setString(6, salary);
-			pstmt4.setString(7, currency);
+			pstmt4.setString(2, employer1);
+			pstmt4.setString(3, endingtitle1);
+			pstmt4.setString(4, start1);
+			pstmt4.setString(5, end1);
+			pstmt4.setString(6, current1);
+			pstmt4.setString(7, currency1);
 			pstmt4.executeUpdate();
+			}
 			String query5 = ("if exists(select * from emp_details_basic_2 where USER_ID = '1') update emp_details_basic_2 set J_EXP_YEAR = '"
 					+ expyear + "', J_EXP_MONTH='" + expmonth + "', J_POST_GRID='" + postgrad + "', J_GRADUATION='"
 					+ grad + "', J_INDUSTRY='" + industry + "', J_FUNCTIONAL_AREA='" + functionalarea + "'"
@@ -514,12 +535,12 @@ public class test {
 				String itemss = obj.getString("itemid");
 				String major = obj.getString("majorcode");
 				String catt = obj.getString("jpm_decimal");
-
+				String proseq = "90001";
 				String cat_type = "EDUC_QUAL";
 				pstmt6.setInt(1, user);
 				pstmt6.setString(2, proseq);
 				pstmt6.setString(3, cat_type);
-				pstmt6.setString(4, ins);
+				pstmt6.setString(4, ins);  
 				pstmt6.setString(5, passyear);
 				pstmt6.setString(6, countryedu);
 				pstmt6.setString(7, stu);
@@ -645,6 +666,79 @@ public String consultants(@FormDataParam("image") InputStream fileInputStream,
 		}
 		return content;
 	}*/
+	
+	@Path("consultant/forgetpass/{id}")
+	@GET
+
+	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
+		MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
+@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+		MediaType.TEXT_HTML })
+public void consultants(@PathParam ("id") String id) {
+		String text1="Jubilant";
+		Date date = Calendar.getInstance().getTime();
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		String today = formatter.format(date);
+		 byte[] email = Base64.encodeBase64(id.getBytes());
+		 byte[] dates = Base64.encodeBase64(today.getBytes());
+		 byte[] text = Base64.encodeBase64(text1.getBytes());
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+		
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			String query = ("select PSWD from emp_details_login where EMAIL_ADDR='"+id+"'");
+			Statement pstmt = con.createStatement();
+			ResultSet rs = pstmt.executeQuery(query);
+			if (rs.next()){ 
+				String smtpHost = "smtp.gmail.com"; // replace this with a valid host
+				int smtpPort = 587; // replace this with a valid port
+
+				final String sender = "rohitgupta@crosstab.in";
+				final String password = "rohit@crosstab";
+				String recipient1 = "rohitgupta@crosstab.in";
+				Properties properties = new Properties();
+				properties.put("mail.smtp.host", smtpHost);
+				properties.put("mail.smtp.port", smtpPort);
+				properties.put("mail.smtp.auth", "true");
+				properties.put("mail.smtp.starttls.enable", "true");
+				properties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+				properties.put("mail.smtp.debug", "true");
+				Authenticator auth = new Authenticator() {
+					public PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(sender, password);
+					}
+				};
+				Session session = Session.getDefaultInstance(properties, auth);
+				 try{ 
+					 StringBuffer sb = new StringBuffer();
+
+			         MimeMessage message = new MimeMessage(session);  
+			      
+			         message.addRecipient(Message.RecipientType.TO,new InternetAddress(id));  
+			         message.setSubject("Quiz link url");  
+			         sb.append("Please Click in the below link to change your Password");  
+			         sb.append("\n");
+			    sb.append("http://localhost:8000/Quiz/gotoquiz?"+email+"&"+dates+"&"+text1); 
+			 
+			     
+			         message.setText(sb.toString());
+			        
+			         // Send message  
+			         Transport.send(message);  
+			         System.out.println("message sent successfully....");  
+			  
+			      }catch (MessagingException mex) {mex.printStackTrace();}  
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+	}
+	
 	@Path("consultant/testinomial")
 	@GET
 
@@ -855,14 +949,16 @@ public String consultants(@FormDataParam("image") InputStream fileInputStream,
 				jObjects.put("functional_area", rs4.getString("J_FUNCTIONAL_AREA"));
 			}
 			ResultSet rs5 = st.executeQuery("select * from emp_details_works");
-
+			JSONArray jarrs = new JSONArray();
 			while (rs5.next()) {
-				jObjects.put("company", rs5.getString("EMPLOYER"));
-				jObjects.put("jobtitle", rs5.getString("ENDING_TITLE"));
-				jObjects.put("start_date", rs5.getString("START_DT"));
-				jObjects.put("end_date", rs5.getString("END_DT"));
-				jObjects.put("salary", rs5.getString("J_CURRENT_SALARY"));
-				jObjects.put("currency", rs5.getString("CURRENCY"));
+				JSONObject jObjects_work = new JSONObject();
+				jObjects_work.put("company", rs5.getString("EMPLOYER"));
+				jObjects_work.put("jobtitle", rs5.getString("ENDING_TITLE"));
+				jObjects_work.put("start_date", rs5.getString("START_DT"));
+				jObjects_work.put("end_date", rs5.getString("END_DT"));
+				jObjects_work.put("salary", rs5.getString("J_CURRENT_SALARY"));
+				jObjects_work.put("currency", rs5.getString("CURRENCY"));
+				jarrs.put(jObjects_work);
 			}
 			ResultSet rs6 = st.executeQuery("select * from emp_details_edu");
 			JSONArray jarr = new JSONArray();
@@ -880,7 +976,7 @@ public String consultants(@FormDataParam("image") InputStream fileInputStream,
 				jarr.put(objedu);
 
 			}
-
+			jObject.put("work", jarrs);
 			jObject.put("edu", jarr);
 			jObject.put("basic", jObjects);
 		} catch (Exception e) {
