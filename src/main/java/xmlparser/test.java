@@ -24,14 +24,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-
-
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -65,6 +64,7 @@ import java.io.OutputStream;
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.XML;
 
 @Path("/test")
 
@@ -485,7 +485,7 @@ public class test {
 			pstmt3.setString(5, emailid);
 			pstmt3.setString(6, emailflag);
 			pstmt3.executeUpdate();
-			
+
 			String query4 = ("insert into emp_details_works (HRS_PROFILE_SEQ,EMPLOYER,ENDING_TITLE,START_DT,END_DT,J_CURRENT_SALARY,CURRENCY)values(?,?,?,?,?,?,?)");
 			PreparedStatement pstmt4 = con.prepareStatement(query4);
 			JSONArray jsonArrays = new JSONArray(work_arr);
@@ -498,16 +498,16 @@ public class test {
 				String end1 = objs.getString("enddt");
 				String current1 = objs.getString("currsal");
 				String currency1 = objs.getString("curr");
-			String proseq = "90001";
+				String proseq = "90001";
 
-			pstmt4.setString(1, proseq);
-			pstmt4.setString(2, employer1);
-			pstmt4.setString(3, endingtitle1);
-			pstmt4.setString(4, start1);
-			pstmt4.setString(5, end1);
-			pstmt4.setString(6, current1);
-			pstmt4.setString(7, currency1);
-			pstmt4.executeUpdate();
+				pstmt4.setString(1, proseq);
+				pstmt4.setString(2, employer1);
+				pstmt4.setString(3, endingtitle1);
+				pstmt4.setString(4, start1);
+				pstmt4.setString(5, end1);
+				pstmt4.setString(6, current1);
+				pstmt4.setString(7, currency1);
+				pstmt4.executeUpdate();
 			}
 			String query5 = ("if exists(select * from emp_details_basic_2 where USER_ID = '1') update emp_details_basic_2 set J_EXP_YEAR = '"
 					+ expyear + "', J_EXP_MONTH='" + expmonth + "', J_POST_GRID='" + postgrad + "', J_GRADUATION='"
@@ -540,7 +540,7 @@ public class test {
 				pstmt6.setInt(1, user);
 				pstmt6.setString(2, proseq);
 				pstmt6.setString(3, cat_type);
-				pstmt6.setString(4, ins);  
+				pstmt6.setString(4, ins);
 				pstmt6.setString(5, passyear);
 				pstmt6.setString(6, countryedu);
 				pstmt6.setString(7, stu);
@@ -585,115 +585,123 @@ public class test {
 		}
 		return Response.status(200).entity("testinomial is uploaded successfully to sqlexpress database").build();
 	}
+
 	@Path("consultant/testinomial_delete/{id}")
 	@GET
 
 	@Produces(MediaType.TEXT_HTML)
-	public String consultant_table2(@PathParam ("id") int id) {
+	public String consultant_table2(@PathParam("id") int id) {
 		String content = null;
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
 					+ "password=rohitcrosstab";
-		
+
 			Connection con = DriverManager.getConnection(connectionUrl);
 			System.out.println("Connected.");
-			PreparedStatement stmt = con.prepareStatement("delete from consultant_emp_speak where id="+id);
+			PreparedStatement stmt = con.prepareStatement("delete from consultant_emp_speak where id=" + id);
 			stmt.executeUpdate();
 			String query = ("select * from consultant_emp_speak");
 			Statement pstmt = con.createStatement();
 			ResultSet rs = pstmt.executeQuery(query);
-			while (rs.next()){ 
-			
+			while (rs.next()) {
+
 				byte[] bytes = rs.getBytes("image");
-			byte[] encoded = Base64.encodeBase64(bytes);
-			String encodedString = new String(encoded);	
-				content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," +encodedString+ "' width='100px' height='100px' alt=''/></td>"
-						+ "<td class='2'>" + rs.getString("name") + "</td>" + "<td class='3'>" + rs.getString("designation") + "<td class='4'>"
+				byte[] encoded = Base64.encodeBase64(bytes);
+				String encodedString = new String(encoded);
+				content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," + encodedString
+						+ "' width='100px' height='100px' alt=''/></td>" + "<td class='2'>" + rs.getString("name")
+						+ "</td>" + "<td class='3'>" + rs.getString("designation") + "<td class='4'>"
 						+ rs.getString("quote") + "</td>"
-								+ " <td><button type='button' class='edit'data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"+ rs.getString(1) + "');\"><i class='fa fa-pencil'></i></button>&nbsp;&nbsp;&nbsp;<button type='button' class='edits'onclick=\"delete_row('"+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>"
-								+"</tr>";
-				
+						+ " <td><button type='button' class='edit'data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"
+						+ rs.getString(1)
+						+ "');\"><i class='fa fa-pencil'></i></button>&amp;nbsp;&amp;nbsp;&amp;nbsp;<button type='button' class='edits'onclick=\"delete_row('"
+						+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return content;
 	}
-	/*@Path("consultant/testinomial_update/{id}")
-	@GET
+	/*
+	 * @Path("consultant/testinomial_update/{id}")
+	 * 
+	 * @GET
+	 * 
+	 * @Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA,
+	 * MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+	 * MediaType.TEXT_HTML })
+	 * 
+	 * @Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
+	 * MediaType.APPLICATION_XML, MediaType.TEXT_HTML }) public String
+	 * consultants(@FormDataParam("image") InputStream fileInputStream,
+	 * 
+	 * @FormDataParam("image") FormDataContentDisposition
+	 * fileInputDetails, @FormDataParam("name") String enames,
+	 * 
+	 * @FormDataParam("dsgn") String dsgn, @FormDataParam("quote") String
+	 * equote, @PathParam ("id") int id) { String content = null; try {
+	 * Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); String
+	 * connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" +
+	 * "database=jubilant;" + "user=sa;" + "password=rohitcrosstab";
+	 * 
+	 * Connection con = DriverManager.getConnection(connectionUrl);
+	 * System.out.println("Connected."); PreparedStatement stmt = con.
+	 * prepareStatement("update name, designation, quote, image from consultant_emp_speak where id="
+	 * +id); stmt.setString(1, enames); stmt.setString(2, dsgn);
+	 * stmt.setString(3, equote); stmt.setBinaryStream(4, fileInputStream);
+	 * 
+	 * stmt.executeUpdate();
+	 * 
+	 * String query = ("select * from consultant_emp_speak"); Statement pstmt =
+	 * con.createStatement(); ResultSet rs = pstmt.executeQuery(query); while
+	 * (rs.next()){
+	 * 
+	 * byte[] bytes = rs.getBytes("image"); byte[] encoded =
+	 * Base64.encodeBase64(bytes); String encodedString = new String(encoded);
+	 * content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64,"
+	 * +encodedString+ "' width='100px' height='100px' alt=''/></td>" +
+	 * "<td class='2'>" + rs.getString("name") + "</td>" + "<td class='3'>" +
+	 * rs.getString("designation") + "<td class='4'>" + rs.getString("quote") +
+	 * "</td>" +
+	 * " <td><button type='button' class='edit' data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"
+	 * + rs.getString(1) +
+	 * "');\"><i class='fa fa-pencil'></i></button>&amp;nbsp;&amp;nbsp;&amp;nbsp;<button type='button' class='edits' onclick=\"delete_row('"
+	 * + rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>"
+	 * +"</tr>";
+	 * 
+	 * } } catch (Exception e) { e.printStackTrace(); } return content; }
+	 */
 
-	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
-		MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
-@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-		MediaType.TEXT_HTML })
-public String consultants(@FormDataParam("image") InputStream fileInputStream,
-		@FormDataParam("image") FormDataContentDisposition fileInputDetails, @FormDataParam("name") String enames,
-		@FormDataParam("dsgn") String dsgn, @FormDataParam("quote") String equote, @PathParam ("id") int id) {
-		String content = null;
-		try {
-			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
-					+ "password=rohitcrosstab";
-		
-			Connection con = DriverManager.getConnection(connectionUrl);
-			System.out.println("Connected.");
-			PreparedStatement stmt = con.prepareStatement("update name, designation, quote, image from consultant_emp_speak where id="+id);
-			stmt.setString(1, enames);
-			stmt.setString(2, dsgn);
-			stmt.setString(3, equote);
-			stmt.setBinaryStream(4, fileInputStream);
-
-			stmt.executeUpdate();
-		
-			String query = ("select * from consultant_emp_speak");
-			Statement pstmt = con.createStatement();
-			ResultSet rs = pstmt.executeQuery(query);
-			while (rs.next()){ 
-			
-				byte[] bytes = rs.getBytes("image");
-			byte[] encoded = Base64.encodeBase64(bytes);
-			String encodedString = new String(encoded);	
-				content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," +encodedString+ "' width='100px' height='100px' alt=''/></td>"
-						+ "<td class='2'>" + rs.getString("name") + "</td>" + "<td class='3'>" + rs.getString("designation") + "<td class='4'>"
-						+ rs.getString("quote") + "</td>"
-								+ " <td><button type='button' class='edit' data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"+ rs.getString(1) + "');\"><i class='fa fa-pencil'></i></button>&nbsp;&nbsp;&nbsp;<button type='button' class='edits' onclick=\"delete_row('"+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>"
-								+"</tr>";
-				
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return content;
-	}*/
-	
 	@Path("consultant/forgetpass/{id}")
 	@GET
 
 	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
-		MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
-@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-		MediaType.TEXT_HTML })
-public void consultants(@PathParam ("id") String id) {
-		String text1="Jubilant";
+			MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
+	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.TEXT_HTML })
+	public void consultants(@PathParam("id") String id) {
+		String text1 = "Jubilant";
 		Date date = Calendar.getInstance().getTime();
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String today = formatter.format(date);
-		 byte[] email = Base64.encodeBase64(id.getBytes());
-		 byte[] dates = Base64.encodeBase64(today.getBytes());
-		 byte[] text = Base64.encodeBase64(text1.getBytes());
+		byte[] email = Base64.encodeBase64(id.getBytes());
+		byte[] dates = Base64.encodeBase64(today.getBytes());
+		byte[] text = Base64.encodeBase64(text1.getBytes());
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
 					+ "password=rohitcrosstab";
-		
+
 			Connection con = DriverManager.getConnection(connectionUrl);
 			System.out.println("Connected.");
-			String query = ("select PSWD from emp_details_login where EMAIL_ADDR='"+id+"'");
+			String query = ("select PSWD from emp_details_login where EMAIL_ADDR='" + id + "'");
 			Statement pstmt = con.createStatement();
 			ResultSet rs = pstmt.executeQuery(query);
-			if (rs.next()){ 
-				String smtpHost = "smtp.gmail.com"; // replace this with a valid host
+			if (rs.next()) {
+				String smtpHost = "smtp.gmail.com"; // replace this with a valid
+													// host
 				int smtpPort = 587; // replace this with a valid port
 
 				final String sender = "rohitgupta@crosstab.in";
@@ -712,33 +720,34 @@ public void consultants(@PathParam ("id") String id) {
 					}
 				};
 				Session session = Session.getDefaultInstance(properties, auth);
-				 try{ 
-					 StringBuffer sb = new StringBuffer();
+				try {
+					StringBuffer sb = new StringBuffer();
 
-			         MimeMessage message = new MimeMessage(session);  
-			      
-			         message.addRecipient(Message.RecipientType.TO,new InternetAddress(id));  
-			         message.setSubject("Quiz link url");  
-			         sb.append("Please Click in the below link to change your Password");  
-			         sb.append("\n");
-			    sb.append("http://localhost:8000/Quiz/gotoquiz?"+email+"&"+dates+"&"+text1); 
-			 
-			     
-			         message.setText(sb.toString());
-			        
-			         // Send message  
-			         Transport.send(message);  
-			         System.out.println("message sent successfully....");  
-			  
-			      }catch (MessagingException mex) {mex.printStackTrace();}  
-				
+					MimeMessage message = new MimeMessage(session);
+
+					message.addRecipient(Message.RecipientType.TO, new InternetAddress(id));
+					message.setSubject("Quiz link url");
+					sb.append("Please Click in the below link to change your Password");
+					sb.append("\n");
+					sb.append("http://localhost:8000/Quiz/gotoquiz?" + email + "&amp;" + dates + "&amp;" + text1);
+
+					message.setText(sb.toString());
+
+					// Send message
+					Transport.send(message);
+					System.out.println("message sent successfully....");
+
+				} catch (MessagingException mex) {
+					mex.printStackTrace();
+				}
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
+
 	}
-	
+
 	@Path("consultant/testinomial")
 	@GET
 
@@ -749,29 +758,33 @@ public void consultants(@PathParam ("id") String id) {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
 					+ "password=rohitcrosstab";
-		
+
 			Connection con = DriverManager.getConnection(connectionUrl);
 			System.out.println("Connected.");
 			String query = ("select * from consultant_emp_speak");
 			Statement pstmt = con.createStatement();
 			ResultSet rs = pstmt.executeQuery(query);
-			while (rs.next()){ 
-			
+			while (rs.next()) {
+
 				byte[] bytes = rs.getBytes("image");
-			byte[] encoded = Base64.encodeBase64(bytes);
-			String encodedString = new String(encoded);	
-				content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," +encodedString+ "' width='100px' height='100px' alt=''/></td>"
-						+ "<td class='2'>" + rs.getString("name") + "</td>" + "<td class='3'>" + rs.getString("designation") + "<td class='4'>"
+				byte[] encoded = Base64.encodeBase64(bytes);
+				String encodedString = new String(encoded);
+				content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," + encodedString
+						+ "' width='100px' height='100px' alt=''/></td>" + "<td class='2'>" + rs.getString("name")
+						+ "</td>" + "<td class='3'>" + rs.getString("designation") + "<td class='4'>"
 						+ rs.getString("quote") + "</td>"
-								+ " <td><button type='button'data-toggle='modal' data-target='#myModal' class='edit' onclick=\"edit_row('"+ rs.getString(1) + "');\"><i class='fa fa-pencil'></i></button>&nbsp;&nbsp;&nbsp;<button type='button' class='edits'onclick=\"delete_row('"+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>"
-								+"</tr>";
-				
+						+ " <td><button type='button'data-toggle='modal' data-target='#myModal' class='edit' onclick=\"edit_row('"
+						+ rs.getString(1)
+						+ "');\"><i class='fa fa-pencil'></i></button>&amp;nbsp;&amp;nbsp;&amp;nbsp;<button type='button' class='edits'onclick=\"delete_row('"
+						+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return content;
 	}
+
 	@Path("consultant/testinomial_owl")
 	@GET
 
@@ -779,33 +792,34 @@ public void consultants(@PathParam ("id") String id) {
 	public Response consultant_table1() {
 		JSONArray jArrays = new JSONArray();
 		try {
-		
+
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
 					+ "password=rohitcrosstab";
-		
+
 			Connection con = DriverManager.getConnection(connectionUrl);
 			System.out.println("Connected.");
 			String query = ("select name, designation, quote, image from consultant_emp_speak");
 			Statement pstmt = con.createStatement();
 			ResultSet rs = pstmt.executeQuery(query);
-			while (rs.next()){ 
-			
+			while (rs.next()) {
+
 				byte[] bytes = rs.getBytes("image");
-			byte[] encoded = Base64.encodeBase64(bytes);
-			String encodedString = new String(encoded);	
-			JSONObject jObjects = new JSONObject();
-			jObjects.put("empnames", rs.getString("name"));
-			jObjects.put("empdesg", rs.getString("designation"));
-			jObjects.put("empquote", rs.getString("quote"));
-			jObjects.put("photo", encodedString);
-			jArrays.put(jObjects);
+				byte[] encoded = Base64.encodeBase64(bytes);
+				String encodedString = new String(encoded);
+				JSONObject jObjects = new JSONObject();
+				jObjects.put("empnames", rs.getString("name"));
+				jObjects.put("empdesg", rs.getString("designation"));
+				jObjects.put("empquote", rs.getString("quote"));
+				jObjects.put("photo", encodedString);
+				jArrays.put(jObjects);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return Response.status(200).entity(jArrays.toString()).build();
 	}
+
 	@Path("consultant/table")
 	@POST
 
@@ -851,7 +865,7 @@ public void consultants(@PathParam ("id") String id) {
 			Statement st = con.createStatement();
 			ResultSet rs = st.executeQuery("select emp_name,emp_quote from testinomial;");
 			while (rs.next()) {
-				
+
 				JSONObject jObject = new JSONObject();
 
 				jObject.put("col1", rs.getString(1));
@@ -887,7 +901,7 @@ public void consultants(@PathParam ("id") String id) {
 				byte[] bytes = rs.getBytes("photo");
 				byte[] encoded = Base64.encodeBase64(bytes);
 				String encodedString = new String(encoded);
-				
+
 				JSONObject jObjects = new JSONObject();
 				jObjects.put("empnames", rs.getString(1));
 				jObjects.put("empquote", rs.getString(2));
@@ -986,6 +1000,57 @@ public void consultants(@PathParam ("id") String id) {
 		return Response.status(200).entity(jObject.toString()).build();
 	}
 
+	@Path("/xmltojson")
+	@GET
+	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
+	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.TEXT_HTML })
+	public Response xmltojson() {
+		
+		String xml_data = "<job_opening><JobOpeningId>11732</JobOpeningId><JobTitle>Temporary Inspection &amp; Packaging Positions</JobTitle><Joblocation>SPK</Joblocation><Locationdescr>Spokane</Locationdescr><RecruiterId>jubl@jubl.com</RecruiterId><BusinessUnit>CMO01</BusinessUnit><Dept>60809C</Dept><DeptDescr>SVP Packaging I</DeptDescr><Country>USA</Country><Company>JHS</Company><CompanyDescr>Jubilant HollisterStier Spokan</CompanyDescr><CompanySeq>60</CompanySeq><RecruitingLoc>1590</RecruitingLoc><Function>Manufacturing</Function><Business>CMO, Spokane</Business><Vertical>Pharma-NA</Vertical><Subvertical>CMO, Spokane</Subvertical><jobposting><Jobpostingdate>17/01/17</Jobpostingdate><Jobremovaldate /></jobposting></job_opening>";
+	JSONObject obj = XML.toJSONObject(xml_data);
+	
+ try {
+		 Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		 String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" +
+		 "database=jubilant;" + "user=sa;" + "password=rohitcrosstab";
+		  Connection con = DriverManager.getConnection(connectionUrl);
+		  System.out.println("Connected."); 
+		  String querys = (" insert into job_openings (JobOpeningId,Job_title,jobdescr,joblocation,locationdescr,recruiterid,buisnessunit,dept,deptdescr,country,company,companydescr,companyseq,recruitingloc,function,buisness,vertical,subvertical,jobopeningdate,jobremovaldate)values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+
+			PreparedStatement pstm= con.prepareStatement(querys);
+			JSONArray jsonArray = new JSONArray(obj);
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject objs = jsonArray.getJSONObject(i);
+				JSONObject objss = objs.getJSONObject("job_opening");
+				pstm.setString(1, objss.getString("JobOpeningId"));
+				pstm.setString(2, objss.getString("JobOpeningId"));
+				pstm.setString(3, objss.getString("JobOpeningId"));
+				pstm.setString(4, objss.getString("JobOpeningId"));
+				pstm.setString(5, objss.getString("JobOpeningId"));
+				pstm.setString(6, objss.getString("JobOpeningId"));
+				pstm.setString(7, objss.getString("JobOpeningId"));
+				pstm.setString(8, objss.getString("JobOpeningId"));
+				pstm.setString(9, objss.getString("JobOpeningId"));
+				pstm.setString(10, objss.getString("JobOpeningId"));
+				pstm.setString(11, objss.getString("JobOpeningId"));
+				pstm.setString(12, objss.getString("JobOpeningId"));
+				pstm.setString(13, objss.getString("JobOpeningId"));
+				pstm.setString(14, objss.getString("JobOpeningId"));
+				pstm.setString(15, objss.getString("JobOpeningId"));
+				pstm.setString(16, objss.getString("JobOpeningId"));
+				pstm.setString(17, objss.getString("JobOpeningId"));
+				pstm.setString(18, objss.getString("JobOpeningId"));
+				pstm.setString(19, objss.getString("JobOpeningId"));
+				pstm.setString(20, objss.getString("JobOpeningId"));
+				pstm.executeUpdate();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+ return Response.status(200).entity(obj.toString()).build();
+}
 	@Path("/retrieve_iamge")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
