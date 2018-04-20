@@ -1104,16 +1104,51 @@ public class test {
 			System.out.println("Connected.");
 			Statement st = con.createStatement();
 			
-			ResultSet rs = st.executeQuery("select JobOpeningId,Job_title,jobdescr,joblocation,funct,buisness from job_openings where country='" + coun + "'");
+			ResultSet rs = st.executeQuery("select JobOpeningId,Job_title,jobdescr,locationdescr,joblocation,funct,buisness from job_openings where country='" + coun + "'");
 			while (rs.next()) {
 				JSONObject jObjects = new JSONObject();
 				jObjects.put("jobcode", rs.getString("JobOpeningId"));
 				jObjects.put("jobtitle", rs.getString("Job_title"));
 				jObjects.put("jobdescr", rs.getString("jobdescr"));
 				jObjects.put("jobloc", rs.getString("joblocation"));
+				jObjects.put("locdesc", rs.getString("locationdescr"));
 				jObjects.put("jobfunct", rs.getString("funct"));
 				jObjects.put("jobbuis", rs.getString("buisness"));
 				jArrays.put(jObjects);
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(jArrays.toString());
+		return Response.status(200).entity(jArrays.toString()).build();
+	}
+	@Path("/mapdatas/{state}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response mapdatas(@PathParam("state") String state) {
+		JSONObject jObject = new JSONObject();
+		JSONArray jArrays = new JSONArray();
+		try {
+
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			Statement st = con.createStatement();
+			
+			ResultSet rs = st.executeQuery("select JobOpeningId,Job_title,funct,buisness from job_openings where joblocation='" + state + "'");
+			while (rs.next()) {
+				JSONObject jObjectss = new JSONObject();
+				jObjectss.put("jobcode", rs.getString("JobOpeningId"));
+				jObjectss.put("jobtitle", rs.getString("Job_title"));
+			;
+			
+				jObjectss.put("jobfunct", rs.getString("funct"));
+				jObjectss.put("jobbuis", rs.getString("buisness"));
+				jArrays.put(jObjectss);
 			}
 			
 			
