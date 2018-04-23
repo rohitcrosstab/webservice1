@@ -1112,39 +1112,55 @@ public class test {
 					+ "password=rohitcrosstab";
 			Connection con = DriverManager.getConnection(connectionUrl);
 			System.out.println("Connected.");
-			Statement st = con.createStatement();
+			Statement st1 = con.createStatement();
 
-			ResultSet rs = st.executeQuery(
+			ResultSet rs1 = st1.executeQuery(
 					"select JobOpeningId,Job_title,jobdescr,locationdescr,joblocation,funct,buisness,REPLACE(funct,'&','n') as output1,REPLACE(locationdescr,'&','n') as output2 from job_openings where country='"
 							+ coun + "'");
-			while (rs.next()) {
-				content += "<tr class='tbl-item'><td class='title'>" + rs.getString("JobOpeningId") + "</td>"
-						+ "<td class='title'>" + rs.getString("Job_title") + "</td>" + "<td class='Noida'>"
-						+ rs.getString("output2") + "</td>" + "<td class='desc'>" + rs.getString("output1") + "</td>"
-						+ "<td class='Sales_Marketing_n_Business_Development'>" + rs.getString("buisness") + "</td>"
+			while (rs1.next()) {
+				content += "<tr class='tbl-item'><td class='title'>" + rs1.getString("JobOpeningId") + "</td>"
+						+ "<td class='title'>" + rs1.getString("Job_title") + "</td>" + "<td class='"+ rs1.getString("output2") +" '>"
+						+ rs1.getString("output2") + "</td>" + "<td class='"+rs1.getString("output1")+"'>" + rs1.getString("output1") + "</td>"
+						+ "<td class='"+ rs1.getString("buisness") +"'>" + rs1.getString("buisness") + "</td>"
 						+ "<td><a href='#' data-toggle='modal' data-target='#myModal'><span class='modalTrigger' style='cursor: pointer; text-decoration: underline; color: #004d99;'>"
 						+ "<i class='fa fa-paper-plane'></i>&nbsp;Apply</span></a><br><a href='#' data-toggle='modal' data-target='#emailModal'><span style='cursor: pointer; text-decoration: underline; color: #80bb2d;'>"
 						+ "<i class='fa fa-envelope'></i>&nbsp;Refer a friend</span></a></td></tr>)";
-				funct += "<li><span data-path='." + rs.getString("output1") + "'>" + rs.getString("output1")
-						+ "</span></li>";
-				locdesc += "<li><span data-path='." + rs.getString("output2") + "'>" + rs.getString("output2")
-						+ "</span></li>";
-				buis += "<li><span data-path='." + rs.getString("buisness") + "'>" + rs.getString("buisness")
-						+ "</span></li>";
+				
 			}
-
+			Statement st2 = con.createStatement();
+			ResultSet rs2 = st2.executeQuery(
+					"select distinct REPLACE(funct,'&','n') as output3 from job_openings where country='"
+							+ coun + "'");
+			while (rs2.next()) {
+				funct += "<li><span data-path='." + rs2.getString("output3") + "'>" + rs2.getString("output3")
+				+ "</span></li>";
+			}
+			Statement st3 = con.createStatement();
+			ResultSet rs3 = st3.executeQuery(
+					"select distinct REPLACE(locationdescr,'&','n') as output4 from job_openings where country='"
+							+ coun + "'");
+			while (rs3.next()) {
+				locdesc += "<li><span data-path='." + rs3.getString("output4") + "'>" + rs3.getString("output4")
+				+ "</span></li>";
+			}
+			Statement st4 = con.createStatement();
+			ResultSet rs4 = st4.executeQuery(
+					"select distinct buisness from job_openings where country='"
+							+ coun + "'");
+			while (rs4.next()) {
+				buis += "<li><span data-path='." + rs4.getString("buisness") + "'>" + rs4.getString("buisness")
+				+ "</span></li>";
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return "'<div class='jplist-panel panel-top' style=''><div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging'>'"
-				+ " <ul style='color: #000; width: 100%;'><li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li><li><span data-number='10'> 10 per page </span></li><li><span data-number='all'> View All </span></li>'"
-				+ " </ul> </div> <div class='text-filter-box'> <i class='fa fa-search jplist-icon' style='border-bottom-left-radius: 15px; border-top-left-radius: 15px; line-height: 28px;'></i>"
-				+ " <input data-path='.title' type='text' value='' placeholder='Filter Job Title' data-control-type='textbox' data-control-name='title-filter' data-control-action='filter' /> </div> <div class='text-filter-box'> <i class='fa fa-search jplist-icon' style='border-bottom-left-radius: 15px; border-top-left-radius: 15px; line-height: 28px;'></i>"
-				+ " <input data-path='.desc' type='text' value='' placeholder='Filter Job Description' data-control-type='textbox' data-control-name='desc-filter' data-control-action='filter' /> "
-				+ "</div> <div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='location-filter' data-control-action='filter'> <ul id='locationUL' style='color: #000; width: 100%;'> <li><span data-path='default'>Filter by Location</span></li>"+locdesc+""
-				+ " </ul> </div> <div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='function-filter' data-control-action='filter'> <ul id='functionUL' style='color: #000; width: 100%;'> <li><span data-path='default'>Filter by Function</span></li>"+funct+""
-				+ " </ul> </div> <div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='business-filter' data-control-action='filter'> <ul id='businessUL' style='color: #000; width: 100;'> <li><span data-path='default'>Filter by Business</span></li>"+buis+" </ul> "
-				+ "</div> <div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging'></div> </div> <!-- data --> <div class='text-shadow' style='padding-top: 20px;'> "
+				+ " <ul style='color: #000; width: 100%;'><li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li><li><span data-number='10'> 10 per page </span></li><li><span data-number='all'> View All </span></li>"
+				+ " </ul> </div> "
+				+ " <div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='location-filter' data-control-action='filter'> <ul id='locationUL' style='color: #000; width: 100%;'> <li><span data-path='default'>Filter by Location</span></li>"+locdesc+"</ul></div>"
+				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='function-filter' data-control-action='filter'> <ul id='functionUL' style='color: #000; width: 100%;'> <li><span data-path='default'>Filter by Function</span></li>"+funct+"</ul></div>"
+				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='business-filter' data-control-action='filter'> <ul id='businessUL' style='color: #000; width: 100;'> <li><span data-path='default'>Filter by Business</span></li>"+buis+" </ul></div> "
+				+ "<div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging'></div> </div> <!-- data --> <div class='text-shadow' style='padding-top: 20px;'> "
 				+ "<table class='demo-tbl' style='border: 2px solid #eeeeee;'> <!-- one more panel section --> <thead class='jplist-panel'> <tr data-control-type='sort-buttons-group' data-control-name='header-sort-buttons' data-control-action='sort' data-mode='single' data-datetime-format='{month}/{day}/{year}'>"
 				+ " <th width='10%'><span class='header' style='cursor: pointer'>Job Code</span></th> <th width='15%'><span class='header' style='cursor: pointer'>Job Title</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Location</span></th> <th width='20%'><span class='header' style='cursor: pointer'>Function</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Business</span></th> <th width='8%'><span class='header'>Apply</span></th> </tr> </thead>"
 				+ " <tbody id='jobpostingsBody'> </tbody>"+content+" </table> </div>"
@@ -1155,9 +1171,12 @@ public class test {
 	@Path("/mapdatas/{state}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response mapdatas(@PathParam("state") String state) {
-		JSONObject jObject = new JSONObject();
-		JSONArray jArrays = new JSONArray();
+	public String mapdatas(@PathParam("state") String state) {
+		
+		String content = "";
+		String funct = "";
+		
+		String buis = "";
 		try {
 
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -1165,25 +1184,51 @@ public class test {
 					+ "password=rohitcrosstab";
 			Connection con = DriverManager.getConnection(connectionUrl);
 			System.out.println("Connected.");
-			Statement st = con.createStatement();
+			Statement st1 = con.createStatement();
 
-			ResultSet rs = st.executeQuery(
-					"select JobOpeningId,Job_title,funct,buisness from job_openings where joblocation='" + state + "'");
-			while (rs.next()) {
-				JSONObject jObjectss = new JSONObject();
-				jObjectss.put("jobcode", rs.getString("JobOpeningId"));
-				jObjectss.put("jobtitle", rs.getString("Job_title"));
-
-				jObjectss.put("jobfunct", rs.getString("funct"));
-				jObjectss.put("jobbuis", rs.getString("buisness"));
-				jArrays.put(jObjectss);
+			ResultSet rs1 = st1.executeQuery(
+					"select JobOpeningId,Job_title,jobdescr,joblocation,funct,buisness,REPLACE(funct,'&','n') as output1 from job_openings where joblocation='"
+							+ state + "'");
+			while (rs1.next()) {
+				content += "<tr class='tbl-item'><td class='title'>" + rs1.getString("JobOpeningId") + "</td>"
+						+ "<td class='title'>" + rs1.getString("Job_title") + "</td>" 
+						+"<td class='"+rs1.getString("output1")+"'>" + rs1.getString("output1") + "</td>"
+						+ "<td class='"+ rs1.getString("buisness") +"'>" + rs1.getString("buisness") + "</td>"
+						+ "<td><a href='#' data-toggle='modal' data-target='#myModal'><span class='modalTrigger' style='cursor: pointer; text-decoration: underline; color: #004d99;'>"
+						+ "<i class='fa fa-paper-plane'></i>&nbsp;Apply</span></a><br><a href='#' data-toggle='modal' data-target='#emailModal'><span style='cursor: pointer; text-decoration: underline; color: #80bb2d;'>"
+						+ "<i class='fa fa-envelope'></i>&nbsp;Refer a friend</span></a></td></tr>)";
+				
 			}
-
+			Statement st2 = con.createStatement();
+			ResultSet rs2 = st2.executeQuery(
+					"select distinct REPLACE(funct,'&','n') as output3 from job_openings where joblocation='"
+							+ state + "'");
+			while (rs2.next()) {
+				funct += "<li><span data-path='." + rs2.getString("output3") + "'>" + rs2.getString("output3")
+				+ "</span></li>";
+			}
+			
+			Statement st4 = con.createStatement();
+			ResultSet rs4 = st4.executeQuery(
+					"select distinct buisness from job_openings where joblocation='"
+							+ state + "'");
+			while (rs4.next()) {
+				buis += "<li><span data-path='." + rs4.getString("buisness") + "'>" + rs4.getString("buisness")
+				+ "</span></li>";
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return "'<div class='jplist-panel panel-top' style=''><div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging'>'"
+				+ " <ul style='color: #000; width: 100%;'><li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li><li><span data-number='10'> 10 per page </span></li><li><span data-number='all'> View All </span></li>"
+				+ " </ul> </div> "
+				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='function-filter' data-control-action='filter'> <ul id='functionUL' style='color: #000; width: 100%;'> <li><span data-path='default'>Filter by Function</span></li>"+funct+"</ul></div>"
+				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='business-filter' data-control-action='filter'> <ul id='businessUL' style='color: #000; width: 100;'> <li><span data-path='default'>Filter by Business</span></li>"+buis+" </ul></div> "
+				+ "<div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging'></div> </div> <!-- data --> <div class='text-shadow' style='padding-top: 20px;'> "
+				+ "<table class='demo-tbl' style='border: 2px solid #eeeeee;'> <!-- one more panel section --> <thead class='jplist-panel'> <tr data-control-type='sort-buttons-group' data-control-name='header-sort-buttons' data-control-action='sort' data-mode='single' data-datetime-format='{month}/{day}/{year}'>"
+				+ " <th width='10%'><span class='header' style='cursor: pointer'>Job Code</span></th> <th width='15%'><span class='header' style='cursor: pointer'>Job Title</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Location</span></th> <th width='20%'><span class='header' style='cursor: pointer'>Function</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Business</span></th> <th width='8%'><span class='header'>Apply</span></th> </tr> </thead>"
+				+ " <tbody id='jobpostingsBody'> </tbody>"+content+" </table> </div>"
+				+ " <div class='jplist-no-results text-shadow align-center' style='padding-top: 60px; color: #000;'> <p> <i class='fa fa-warning'></i>  No job-postings found. </p> </div> <div class='jplist-panel panel-bottom'> <div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'> <ul style='color: #000; width: 100%;'> <li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li> <li><span data-number='10'> 10 per page </span></li> <li><span data-number='all'> View All </span></li> </ul> </div> <div class='jplist-label' data-type='{start} - {end} of {all}' data-control-type='pagination-info' data-control-name='paging' data-control-action='paging' style='font-size: 14px; font-weight: bold; border-radius: 30px;'></div> <div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'></div> </div>";
 
-		System.out.println(jArrays.toString());
-		return Response.status(200).entity(jArrays.toString()).build();
 	}
 }
