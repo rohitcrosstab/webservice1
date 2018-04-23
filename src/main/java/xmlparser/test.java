@@ -1117,6 +1117,19 @@ public class test {
 			ResultSet rs1 = st1.executeQuery(
 					"select JobOpeningId,Job_title,jobdescr,locationdescr,joblocation,funct,buisness,REPLACE(funct,'&','n') as output1,REPLACE(locationdescr,'&','n') as output2 from job_openings where country='"
 							+ coun + "'");
+			if (!rs1.isBeforeFirst() ) {    
+			   return "<script>"
+			   		+ "swal({"
+			+"title : 'Sorry',"
+			+"text : 'There is no job posting for this state',"
+			+"type : 'warning',"
+			+"showCancelButton : true,"
+			+"closeOnConfirm : true,"
+			+"confirmButtonText : 'OK!',"
+			+"confirmButtonColor : '#ec6c62'"
+		+"});"
+		+ "</script>"; 
+			} else
 			while (rs1.next()) {
 				content += "<tr class='tbl-item'><td class='title'>" + rs1.getString("JobOpeningId") + "</td>"
 						+ "<td class='title'>" + rs1.getString("Job_title") + "</td>" + "<td class='"+ rs1.getString("output2") +" '>"
@@ -1189,6 +1202,19 @@ public class test {
 			ResultSet rs1 = st1.executeQuery(
 					"select JobOpeningId,Job_title,jobdescr,joblocation,funct,buisness,REPLACE(funct,'&','n') as output1 from job_openings where joblocation='"
 							+ state + "'");
+			if (!rs1.isBeforeFirst() ) {    
+				   return "<script>"
+				   		+ "swal({"
+				+"title : 'Sorry',"
+				+"text : 'There is no job posting for this state',"
+				+"type : 'warning',"
+				+"showCancelButton : true,"
+				+"closeOnConfirm : true,"
+				+"confirmButtonText : 'OK!',"
+				+"confirmButtonColor : '#ec6c62'"
+			+"});"
+			+ "</script>"; 
+				}
 			while (rs1.next()) {
 				content += "<tr class='tbl-item'><td class='title'>" + rs1.getString("JobOpeningId") + "</td>"
 						+ "<td class='title'>" + rs1.getString("Job_title") + "</td>" 
