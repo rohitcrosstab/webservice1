@@ -49,14 +49,17 @@ import java.util.Properties;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -733,7 +736,7 @@ public class test {
 					message.setSubject("Quiz link url");
 					sb.append("Please Click in the below link to change your Password");
 					sb.append("\n");
-					sb.append("http://localhost:8000/Quiz/gotoquiz?" + email + "&amp;" + dates + "&amp;" + text1);
+					sb.append("http://localhost:8002/xmlparser/rest/test/change_password?email=" + new String(email) + "&date=" + new String(dates) + "&company=" + new String (text));
 
 					message.setText(sb.toString());
 
@@ -1256,5 +1259,158 @@ public class test {
 				+ " <tbody id='jobpostingsBody'> </tbody>"+content+" </table> </div>"
 				+ " <div class='jplist-no-results text-shadow align-center' style='padding-top: 60px; color: #000;'> <p> <i class='fa fa-warning'></i>  No job-postings found. </p> </div> <div class='jplist-panel panel-bottom'> <div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'> <ul style='color: #000; width: 100%;'> <li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li> <li><span data-number='10'> 10 per page </span></li> <li><span data-number='all'> View All </span></li> </ul> </div> <div class='jplist-label' data-type='{start} - {end} of {all}' data-control-type='pagination-info' data-control-name='paging' data-control-action='paging' style='font-size: 14px; font-weight: bold; border-radius: 30px;'></div> <div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'></div> </div>";
 
+	}
+	/*@Path("/consultant_table")
+	@POST
+
+	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
+	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.TEXT_HTML })
+	public Response consul(@FormDataParam("photofiles") InputStream fileInputStream,
+			@FormDataParam("myfiles") FormDataContentDisposition fileInputDetails,
+			@FormDataParam("enames") String enames, @FormDataParam("equote") String equote) {
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" + "database=practice;" + "user=sa;"
+					+ "password=rohit@crosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			String query = ("insert into testinomial(emp_name,emp_quote,photo) VALUES(?,?,?)");
+			PreparedStatement pstmt = con.prepareStatement(query);
+			pstmt.setString(1, enames);
+			pstmt.setString(2, equote);
+
+			pstmt.setBinaryStream(3, fileInputStream);
+
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Response.status(200).entity("testinomial is uploaded successfully to sqlexpress database").build();
+	}
+
+	@Path("consul_delete/{id}")
+	@GET
+
+	@Produces(MediaType.TEXT_HTML)
+	public String consul2(@PathParam("id") int id) {
+		String content = null;
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			PreparedStatement stmt = con.prepareStatement("delete from consultant_emp_speak where id=" + id);
+			stmt.executeUpdate();
+			String query = ("select * from consultant_emp_speak");
+			Statement pstmt = con.createStatement();
+			ResultSet rs = pstmt.executeQuery(query);
+			while (rs.next()) {
+
+				byte[] bytes = rs.getBytes("image");
+				byte[] encoded = Base64.encodeBase64(bytes);
+				String encodedString = new String(encoded);
+				content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," + encodedString
+						+ "' width='100px' height='100px' alt=''/></td>" + "<td class='2'>" + rs.getString("name")
+						+ "</td>" + "<td class='3'>" + rs.getString("designation") + "<td class='4'>"
+						+ rs.getString("quote") + "</td>"
+						+ " <td><button type='button' class='edit'data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"
+						+ rs.getString(1)
+						+ "');\"><i class='fa fa-pencil'></i></button>&amp;nbsp;&amp;nbsp;&amp;nbsp;<button type='button' class='edits'onclick=\"delete_row('"
+						+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return content;
+	}*/
+	@Path("testinomial_delete/{id}")
+	@GET
+
+	@Produces(MediaType.TEXT_HTML)
+	public String consul2(@PathParam("id") int id) {
+		String content = null;
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			PreparedStatement stmt = con.prepareStatement("delete from consultant_emp_speak where id=" + id);
+			stmt.executeUpdate();
+			String query = ("select * from consultant_emp_speak");
+			Statement pstmt = con.createStatement();
+			ResultSet rs = pstmt.executeQuery(query);
+			while (rs.next()) {
+
+				byte[] bytes = rs.getBytes("image");
+				byte[] encoded = Base64.encodeBase64(bytes);
+				String encodedString = new String(encoded);
+				content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," + encodedString
+						+ "' width='100px' height='100px' alt=''/></td>" + "<td class='2'>" + rs.getString("name")
+						+ "</td>" + "<td class='3'>" + rs.getString("designation") + "<td class='4'>"
+						+ rs.getString("quote") + "</td>"
+						+ " <td><button type='button' class='edit'data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"
+						+ rs.getString(1)
+						+ "');\"><i class='fa fa-pencil'></i></button>&amp;nbsp;&amp;nbsp;&amp;nbsp;<button type='button' class='edits'onclick=\"delete_row('"
+						+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return content;
+	}
+	@GET
+	@Path("/change_password")
+	@Produces(MediaType.TEXT_HTML)
+	public String getUsers(
+			@QueryParam("email") String email,
+			@QueryParam("date") String date,
+			@QueryParam("company") String company) {
+		byte[] emailid = Base64.decodeBase64(email.getBytes());
+		
+			return "<script>window.location.href='http://localhost:8002/xmlparser2/login.html?email="+new String(emailid)+"'</script>";
+
+		}
+	@POST
+	@Path("/change_pass")
+	@Produces(MediaType.TEXT_HTML)
+	public String pass(
+			@FormParam("email") String email,
+			 @FormParam("pass") String pass) {
+		
+		try{
+		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+				+ "password=rohitcrosstab";
+		Connection con = DriverManager.getConnection(connectionUrl);
+		System.out.println("Connected.");
+		String query = ("update emp_details_login set PSWD = '"+pass+"' where EMAIL_ADDR = '"+email+"'");	
+		PreparedStatement pstmt = con.prepareStatement(query);
+			
+		pstmt.executeUpdate();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	 return "<script>"
+		+ "swal({"
++"title : 'Success',"
++"text : 'Your password is successfully changed',"
++"type : 'success',"
++"showCancelButton : true,"
++"closeOnConfirm : true,"
++"confirmButtonText : 'OK!',"
++"confirmButtonColor : 'green'"
++"},"
++ "function(){"
++ "window.location.href = 'http://localhost:8002/xmlparser2/test.html'"
++ "});"
++ "</script>";
 	}
 }
