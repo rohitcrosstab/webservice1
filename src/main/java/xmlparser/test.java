@@ -355,7 +355,7 @@ public class test {
 
 	}
 
-	@Path("/insertdb1")
+/*	@Path("/insertdb1")
 	@POST
 
 	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
@@ -388,7 +388,7 @@ public class test {
 		}
 		return Response.status(200).entity("Data is uploaded successfully to sqlexpress database").build();
 	}
-
+*/
 	@Path("/jubilant/emp_details_registration")
 	@POST
 	@Produces(MediaType.TEXT_HTML)
@@ -736,7 +736,8 @@ public class test {
 					message.setSubject("Quiz link url");
 					sb.append("Please Click in the below link to change your Password");
 					sb.append("\n");
-					sb.append("http://localhost:8002/xmlparser/rest/test/change_password?email=" + new String(email) + "&date=" + new String(dates) + "&company=" + new String (text));
+					sb.append("http://localhost:8002/xmlparser/rest/test/change_password?email=" + new String(email)
+							+ "&date=" + new String(dates) + "&company=" + new String(text));
 
 					message.setText(sb.toString());
 
@@ -1004,6 +1005,10 @@ public class test {
 			e.printStackTrace();
 		}
 		System.out.println(jObject.toString());
+		String str = jObject.toString();
+		JSONObject json = new JSONObject(str);
+		String xml = XML.toString(json);
+		System.out.println(xml);
 		return Response.status(200).entity(jObject.toString()).build();
 	}
 
@@ -1120,52 +1125,45 @@ public class test {
 			ResultSet rs1 = st1.executeQuery(
 					"select JobOpeningId,Job_title,jobdescr,locationdescr,joblocation,funct,buisness,REPLACE(funct,'&','n') as output1,REPLACE(locationdescr,'&','n') as output2 from job_openings where country='"
 							+ coun + "'");
-			if (!rs1.isBeforeFirst() ) {    
-			   return "<script>"
-			   		+ "swal({"
-			+"title : 'Sorry',"
-			+"text : 'There is no job posting for this state',"
-			+"type : 'warning',"
-			+"showCancelButton : true,"
-			+"closeOnConfirm : true,"
-			+"confirmButtonText : 'OK!',"
-			+"confirmButtonColor : '#ec6c62'"
-		+"});"
-		+ "</script>"; 
+			if (!rs1.isBeforeFirst()) {
+				return "<script>" + "swal({" + "title : 'Sorry'," + "text : 'There is no job posting for this state',"
+						+ "type : 'warning'," + "showCancelButton : true," + "closeOnConfirm : true,"
+						+ "confirmButtonText : 'OK!'," + "confirmButtonColor : '#ec6c62'" + "});" + "</script>";
 			} else
-			while (rs1.next()) {
-				content += "<tr class='tbl-item'><td class='title'>" + rs1.getString("JobOpeningId") + "</td>"
-						+ "<td class='title'>" + rs1.getString("Job_title") + "</td>" + "<td class='"+ rs1.getString("output2") +" '>"
-						+ rs1.getString("output2") + "</td>" + "<td class='"+rs1.getString("output1")+"'>" + rs1.getString("output1") + "</td>"
-						+ "<td class='"+ rs1.getString("buisness") +"'>" + rs1.getString("buisness") + "</td>"
-						+ "<td><a href='#' data-toggle='modal' data-target='#myModal'><span class='modalTrigger' style='cursor: pointer; text-decoration: underline; color: #004d99;'>"
-						+ "<i class='fa fa-paper-plane'></i>&nbsp;Apply</span></a><br><a href='#' data-toggle='modal' data-target='#emailModal'><span style='cursor: pointer; text-decoration: underline; color: #80bb2d;'>"
-						+ "<i class='fa fa-envelope'></i>&nbsp;Refer a friend</span></a></td></tr>)";
-				
-			}
+				while (rs1.next()) {
+					content += "<tr class='tbl-item'><td class='title'><a href='http://localhost:8002/xmlparser2/job_description.html?job_code="
+							+ rs1.getString("JobOpeningId")
+							+ "'><span class='modalTrigger' style='cursor: pointer;  color: #004d99;'>" + ""
+							+ rs1.getString("JobOpeningId") + "</span></a></td>" + "<td class='title'>"
+							+ rs1.getString("Job_title") + "</td>" + "<td class='" + rs1.getString("output2") + " '>"
+							+ rs1.getString("output2") + "</td>" + "<td class='" + rs1.getString("output1") + "'>"
+							+ rs1.getString("output1") + "</td>" + "<td class='" + rs1.getString("buisness") + "'>"
+							+ rs1.getString("buisness") + "</td>"
+							+ "<td><a href='#' data-toggle='modal' data-target='#myModal'><span class='modalTrigger' style='cursor: pointer; text-decoration: underline; color: #004d99;'>"
+							+ "<i class='fa fa-paper-plane'></i>&nbsp;Apply</span></a><br><a href='#' data-toggle='modal' data-target='#emailModal'><span style='cursor: pointer; text-decoration: underline; color: #80bb2d;'>"
+							+ "<i class='fa fa-envelope'></i>&nbsp;Refer a friend</span></a></td></tr>)";
+
+				}
 			Statement st2 = con.createStatement();
 			ResultSet rs2 = st2.executeQuery(
-					"select distinct REPLACE(funct,'&','n') as output3 from job_openings where country='"
-							+ coun + "'");
+					"select distinct REPLACE(funct,'&','n') as output3 from job_openings where country='" + coun + "'");
 			while (rs2.next()) {
 				funct += "<li><span data-path='." + rs2.getString("output3") + "'>" + rs2.getString("output3")
-				+ "</span></li>";
+						+ "</span></li>";
 			}
 			Statement st3 = con.createStatement();
 			ResultSet rs3 = st3.executeQuery(
-					"select distinct REPLACE(locationdescr,'&','n') as output4 from job_openings where country='"
-							+ coun + "'");
+					"select distinct REPLACE(locationdescr,'&','n') as output4 from job_openings where country='" + coun
+							+ "'");
 			while (rs3.next()) {
 				locdesc += "<li><span data-path='." + rs3.getString("output4") + "'>" + rs3.getString("output4")
-				+ "</span></li>";
+						+ "</span></li>";
 			}
 			Statement st4 = con.createStatement();
-			ResultSet rs4 = st4.executeQuery(
-					"select distinct buisness from job_openings where country='"
-							+ coun + "'");
+			ResultSet rs4 = st4.executeQuery("select distinct buisness from job_openings where country='" + coun + "'");
 			while (rs4.next()) {
 				buis += "<li><span data-path='." + rs4.getString("buisness") + "'>" + rs4.getString("buisness")
-				+ "</span></li>";
+						+ "</span></li>";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1173,13 +1171,16 @@ public class test {
 		return "'<div class='jplist-panel panel-top' style=''><div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging'>'"
 				+ " <ul style='color: #000; width: 100%;'><li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li><li><span data-number='10'> 10 per page </span></li><li><span data-number='all'> View All </span></li>"
 				+ " </ul> </div> "
-				+ " <div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='location-filter' data-control-action='filter'> <ul id='locationUL' style='color: #000; width: 100%;'> <li><span data-path='default'>Filter by Location</span></li>"+locdesc+"</ul></div>"
-				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='function-filter' data-control-action='filter'> <ul id='functionUL' style='color: #000; width: 100%;'> <li><span data-path='default'>Filter by Function</span></li>"+funct+"</ul></div>"
-				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='business-filter' data-control-action='filter'> <ul id='businessUL' style='color: #000; width: 100;'> <li><span data-path='default'>Filter by Business</span></li>"+buis+" </ul></div> "
+				+ " <div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='location-filter' data-control-action='filter'> <ul id='locationUL' style='color: #000; width: 100%;'> <li><span data-path='default'>Filter by Location</span></li>"
+				+ locdesc + "</ul></div>"
+				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='function-filter' data-control-action='filter'> <ul id='functionUL' style='color: #000; width: 100%;'> <li><span data-path='default'>Filter by Function</span></li>"
+				+ funct + "</ul></div>"
+				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='business-filter' data-control-action='filter'> <ul id='businessUL' style='color: #000; width: 100;'> <li><span data-path='default'>Filter by Business</span></li>"
+				+ buis + " </ul></div> "
 				+ "<div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging'></div> </div> <!-- data --> <div class='text-shadow' style='padding-top: 20px;'> "
 				+ "<table class='demo-tbl' style='border: 2px solid #eeeeee;'> <!-- one more panel section --> <thead class='jplist-panel'> <tr data-control-type='sort-buttons-group' data-control-name='header-sort-buttons' data-control-action='sort' data-mode='single' data-datetime-format='{month}/{day}/{year}'>"
 				+ " <th width='10%'><span class='header' style='cursor: pointer'>Job Code</span></th> <th width='15%'><span class='header' style='cursor: pointer'>Job Title</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Location</span></th> <th width='20%'><span class='header' style='cursor: pointer'>Function</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Business</span></th> <th width='8%'><span class='header'>Apply</span></th> </tr> </thead>"
-				+ " <tbody id='jobpostingsBody'> </tbody>"+content+" </table> </div>"
+				+ " <tbody id='jobpostingsBody'> </tbody>" + content + " </table> </div>"
 				+ " <div class='jplist-no-results text-shadow align-center' style='padding-top: 60px; color: #000;'> <p> <i class='fa fa-warning'></i>  No job-postings found. </p> </div> <div class='jplist-panel panel-bottom'> <div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'> <ul style='color: #000; width: 100%;'> <li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li> <li><span data-number='10'> 10 per page </span></li> <li><span data-number='all'> View All </span></li> </ul> </div> <div class='jplist-label' data-type='{start} - {end} of {all}' data-control-type='pagination-info' data-control-name='paging' data-control-action='paging' style='font-size: 14px; font-weight: bold; border-radius: 30px;'></div> <div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'></div> </div>";
 
 	}
@@ -1188,10 +1189,10 @@ public class test {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String mapdatas(@PathParam("state") String state) {
-		
+
 		String content = "";
 		String funct = "";
-		
+
 		String buis = "";
 		try {
 
@@ -1205,45 +1206,36 @@ public class test {
 			ResultSet rs1 = st1.executeQuery(
 					"select JobOpeningId,Job_title,jobdescr,joblocation,funct,buisness,REPLACE(funct,'&','n') as output1 from job_openings where joblocation='"
 							+ state + "'");
-			if (!rs1.isBeforeFirst() ) {    
-				   return "<script>"
-				   		+ "swal({"
-				+"title : 'Sorry',"
-				+"text : 'There is no job posting for this state',"
-				+"type : 'warning',"
-				+"showCancelButton : true,"
-				+"closeOnConfirm : true,"
-				+"confirmButtonText : 'OK!',"
-				+"confirmButtonColor : '#ec6c62'"
-			+"});"
-			+ "</script>"; 
-				}
+			if (!rs1.isBeforeFirst()) {
+				return "<script>" + "swal({" + "title : 'Sorry'," + "text : 'There is no job posting for this state',"
+						+ "type : 'warning'," + "showCancelButton : true," + "closeOnConfirm : true,"
+						+ "confirmButtonText : 'OK!'," + "confirmButtonColor : '#ec6c62'" + "});" + "</script>";
+			}
 			while (rs1.next()) {
 				content += "<tr class='tbl-item'><td class='title'>" + rs1.getString("JobOpeningId") + "</td>"
-						+ "<td class='title'>" + rs1.getString("Job_title") + "</td>" 
-						+"<td class='"+rs1.getString("output1")+"'>" + rs1.getString("output1") + "</td>"
-						+ "<td class='"+ rs1.getString("buisness") +"'>" + rs1.getString("buisness") + "</td>"
+						+ "<td class='title'>" + rs1.getString("Job_title") + "</td>" + "<td class='"
+						+ rs1.getString("output1") + "'>" + rs1.getString("output1") + "</td>" + "<td class='"
+						+ rs1.getString("buisness") + "'>" + rs1.getString("buisness") + "</td>"
 						+ "<td><a href='#' data-toggle='modal' data-target='#myModal'><span class='modalTrigger' style='cursor: pointer; text-decoration: underline; color: #004d99;'>"
 						+ "<i class='fa fa-paper-plane'></i>&nbsp;Apply</span></a><br><a href='#' data-toggle='modal' data-target='#emailModal'><span style='cursor: pointer; text-decoration: underline; color: #80bb2d;'>"
 						+ "<i class='fa fa-envelope'></i>&nbsp;Refer a friend</span></a></td></tr>)";
-				
+
 			}
 			Statement st2 = con.createStatement();
 			ResultSet rs2 = st2.executeQuery(
-					"select distinct REPLACE(funct,'&','n') as output3 from job_openings where joblocation='"
-							+ state + "'");
+					"select distinct REPLACE(funct,'&','n') as output3 from job_openings where joblocation='" + state
+							+ "'");
 			while (rs2.next()) {
 				funct += "<li><span data-path='." + rs2.getString("output3") + "'>" + rs2.getString("output3")
-				+ "</span></li>";
+						+ "</span></li>";
 			}
-			
+
 			Statement st4 = con.createStatement();
-			ResultSet rs4 = st4.executeQuery(
-					"select distinct buisness from job_openings where joblocation='"
-							+ state + "'");
+			ResultSet rs4 = st4
+					.executeQuery("select distinct buisness from job_openings where joblocation='" + state + "'");
 			while (rs4.next()) {
 				buis += "<li><span data-path='." + rs4.getString("buisness") + "'>" + rs4.getString("buisness")
-				+ "</span></li>";
+						+ "</span></li>";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1251,83 +1243,84 @@ public class test {
 		return "'<div class='jplist-panel panel-top' style=''><div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging'>'"
 				+ " <ul style='color: #000; width: 100%;'><li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li><li><span data-number='10'> 10 per page </span></li><li><span data-number='all'> View All </span></li>"
 				+ " </ul> </div> "
-				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='function-filter' data-control-action='filter'> <ul id='functionUL' style='color: #000; width: 100%;'> <li><span data-path='default'>Filter by Function</span></li>"+funct+"</ul></div>"
-				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='business-filter' data-control-action='filter'> <ul id='businessUL' style='color: #000; width: 100;'> <li><span data-path='default'>Filter by Business</span></li>"+buis+" </ul></div> "
+				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='function-filter' data-control-action='filter'> <ul id='functionUL' style='color: #000; width: 100%;'> <li><span data-path='default'>Filter by Function</span></li>"
+				+ funct + "</ul></div>"
+				+ "<div class='jplist-drop-down' data-control-type='filter-drop-down' data-control-name='business-filter' data-control-action='filter'> <ul id='businessUL' style='color: #000; width: 100;'> <li><span data-path='default'>Filter by Business</span></li>"
+				+ buis + " </ul></div> "
 				+ "<div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging'></div> </div> <!-- data --> <div class='text-shadow' style='padding-top: 20px;'> "
 				+ "<table class='demo-tbl' style='border: 2px solid #eeeeee;'> <!-- one more panel section --> <thead class='jplist-panel'> <tr data-control-type='sort-buttons-group' data-control-name='header-sort-buttons' data-control-action='sort' data-mode='single' data-datetime-format='{month}/{day}/{year}'>"
 				+ " <th width='10%'><span class='header' style='cursor: pointer'>Job Code</span></th> <th width='15%'><span class='header' style='cursor: pointer'>Job Title</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Location</span></th> <th width='20%'><span class='header' style='cursor: pointer'>Function</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Business</span></th> <th width='8%'><span class='header'>Apply</span></th> </tr> </thead>"
-				+ " <tbody id='jobpostingsBody'> </tbody>"+content+" </table> </div>"
+				+ " <tbody id='jobpostingsBody'> </tbody>" + content + " </table> </div>"
 				+ " <div class='jplist-no-results text-shadow align-center' style='padding-top: 60px; color: #000;'> <p> <i class='fa fa-warning'></i>  No job-postings found. </p> </div> <div class='jplist-panel panel-bottom'> <div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'> <ul style='color: #000; width: 100%;'> <li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li> <li><span data-number='10'> 10 per page </span></li> <li><span data-number='all'> View All </span></li> </ul> </div> <div class='jplist-label' data-type='{start} - {end} of {all}' data-control-type='pagination-info' data-control-name='paging' data-control-action='paging' style='font-size: 14px; font-weight: bold; border-radius: 30px;'></div> <div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'></div> </div>";
 
 	}
-	/*@Path("/consultant_table")
-	@POST
 
-	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
-			MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
-	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.TEXT_HTML })
-	public Response consul(@FormDataParam("photofiles") InputStream fileInputStream,
-			@FormDataParam("myfiles") FormDataContentDisposition fileInputDetails,
-			@FormDataParam("enames") String enames, @FormDataParam("equote") String equote) {
-		try {
-			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			String connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" + "database=practice;" + "user=sa;"
-					+ "password=rohit@crosstab";
-			Connection con = DriverManager.getConnection(connectionUrl);
-			System.out.println("Connected.");
-			String query = ("insert into testinomial(emp_name,emp_quote,photo) VALUES(?,?,?)");
-			PreparedStatement pstmt = con.prepareStatement(query);
-			pstmt.setString(1, enames);
-			pstmt.setString(2, equote);
-
-			pstmt.setBinaryStream(3, fileInputStream);
-
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Response.status(200).entity("testinomial is uploaded successfully to sqlexpress database").build();
-	}
-
-	@Path("consul_delete/{id}")
-	@GET
-
-	@Produces(MediaType.TEXT_HTML)
-	public String consul2(@PathParam("id") int id) {
-		String content = null;
-		try {
-			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
-					+ "password=rohitcrosstab";
-
-			Connection con = DriverManager.getConnection(connectionUrl);
-			System.out.println("Connected.");
-			PreparedStatement stmt = con.prepareStatement("delete from consultant_emp_speak where id=" + id);
-			stmt.executeUpdate();
-			String query = ("select * from consultant_emp_speak");
-			Statement pstmt = con.createStatement();
-			ResultSet rs = pstmt.executeQuery(query);
-			while (rs.next()) {
-
-				byte[] bytes = rs.getBytes("image");
-				byte[] encoded = Base64.encodeBase64(bytes);
-				String encodedString = new String(encoded);
-				content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," + encodedString
-						+ "' width='100px' height='100px' alt=''/></td>" + "<td class='2'>" + rs.getString("name")
-						+ "</td>" + "<td class='3'>" + rs.getString("designation") + "<td class='4'>"
-						+ rs.getString("quote") + "</td>"
-						+ " <td><button type='button' class='edit'data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"
-						+ rs.getString(1)
-						+ "');\"><i class='fa fa-pencil'></i></button>&amp;nbsp;&amp;nbsp;&amp;nbsp;<button type='button' class='edits'onclick=\"delete_row('"
-						+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return content;
-	}*/
+	/*
+	 * @Path("/consultant_table")
+	 * 
+	 * @POST
+	 * 
+	 * @Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA,
+	 * MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+	 * MediaType.TEXT_HTML })
+	 * 
+	 * @Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
+	 * MediaType.APPLICATION_XML, MediaType.TEXT_HTML }) public Response
+	 * consul(@FormDataParam("photofiles") InputStream fileInputStream,
+	 * 
+	 * @FormDataParam("myfiles") FormDataContentDisposition fileInputDetails,
+	 * 
+	 * @FormDataParam("enames") String enames, @FormDataParam("equote") String
+	 * equote) { try {
+	 * Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); String
+	 * connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" +
+	 * "database=practice;" + "user=sa;" + "password=rohit@crosstab"; Connection
+	 * con = DriverManager.getConnection(connectionUrl);
+	 * System.out.println("Connected."); String query =
+	 * ("insert into testinomial(emp_name,emp_quote,photo) VALUES(?,?,?)");
+	 * PreparedStatement pstmt = con.prepareStatement(query); pstmt.setString(1,
+	 * enames); pstmt.setString(2, equote);
+	 * 
+	 * pstmt.setBinaryStream(3, fileInputStream);
+	 * 
+	 * pstmt.executeUpdate(); } catch (Exception e) { e.printStackTrace(); }
+	 * return Response.status(200).
+	 * entity("testinomial is uploaded successfully to sqlexpress database").
+	 * build(); }
+	 * 
+	 * @Path("consul_delete/{id}")
+	 * 
+	 * @GET
+	 * 
+	 * @Produces(MediaType.TEXT_HTML) public String consul2(@PathParam("id") int
+	 * id) { String content = null; try {
+	 * Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); String
+	 * connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" +
+	 * "database=jubilant;" + "user=sa;" + "password=rohitcrosstab";
+	 * 
+	 * Connection con = DriverManager.getConnection(connectionUrl);
+	 * System.out.println("Connected."); PreparedStatement stmt =
+	 * con.prepareStatement("delete from consultant_emp_speak where id=" + id);
+	 * stmt.executeUpdate(); String query =
+	 * ("select * from consultant_emp_speak"); Statement pstmt =
+	 * con.createStatement(); ResultSet rs = pstmt.executeQuery(query); while
+	 * (rs.next()) {
+	 * 
+	 * byte[] bytes = rs.getBytes("image"); byte[] encoded =
+	 * Base64.encodeBase64(bytes); String encodedString = new String(encoded);
+	 * content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," +
+	 * encodedString + "' width='100px' height='100px' alt=''/></td>" +
+	 * "<td class='2'>" + rs.getString("name") + "</td>" + "<td class='3'>" +
+	 * rs.getString("designation") + "<td class='4'>" + rs.getString("quote") +
+	 * "</td>" +
+	 * " <td><button type='button' class='edit'data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"
+	 * + rs.getString(1) +
+	 * "');\"><i class='fa fa-pencil'></i></button>&amp;nbsp;&amp;nbsp;&amp;nbsp;<button type='button' class='edits'onclick=\"delete_row('"
+	 * + rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>" +
+	 * "</tr>";
+	 * 
+	 * } } catch (Exception e) { e.printStackTrace(); } return content; }
+	 */
 	@Path("testinomial_delete/{id}")
 	@GET
 
@@ -1366,51 +1359,171 @@ public class test {
 		}
 		return content;
 	}
+
 	@GET
 	@Path("/change_password")
 	@Produces(MediaType.TEXT_HTML)
-	public String getUsers(
-			@QueryParam("email") String email,
-			@QueryParam("date") String date,
+	public String getUsers(@QueryParam("email") String email, @QueryParam("date") String date,
 			@QueryParam("company") String company) {
 		byte[] emailid = Base64.decodeBase64(email.getBytes());
-		
-			return "<script>window.location.href='http://localhost:8002/xmlparser2/login.html?email="+new String(emailid)+"'</script>";
 
-		}
+		return "<script>window.location.href='http://localhost:8002/xmlparser2/login.html?email=" + new String(emailid)
+				+ "'</script>";
+
+	}
+
 	@POST
 	@Path("/change_pass")
 	@Produces(MediaType.TEXT_HTML)
-	public String pass(
-			@FormParam("email") String email,
-			 @FormParam("pass") String pass) {
-		
-		try{
-		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
-				+ "password=rohitcrosstab";
-		Connection con = DriverManager.getConnection(connectionUrl);
-		System.out.println("Connected.");
-		String query = ("update emp_details_login set PSWD = '"+pass+"' where EMAIL_ADDR = '"+email+"'");	
-		PreparedStatement pstmt = con.prepareStatement(query);
-			
-		pstmt.executeUpdate();
-	} catch (Exception e) {
-		e.printStackTrace();
+	public String pass(@FormParam("email") String email, @FormParam("pass") String pass) {
+
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			String query = ("update emp_details_login set PSWD = '" + pass + "' where EMAIL_ADDR = '" + email + "'");
+			PreparedStatement pstmt = con.prepareStatement(query);
+
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "<script>" + "swal({" + "title : 'Success'," + "text : 'Your password is successfully changed',"
+				+ "type : 'success'," + "showCancelButton : true," + "closeOnConfirm : true,"
+				+ "confirmButtonText : 'OK!'," + "confirmButtonColor : 'green'" + "}," + "function(){"
+				+ "window.location.href = 'http://localhost:8002/xmlparser2/test.html'" + "});" + "</script>";
 	}
-	 return "<script>"
-		+ "swal({"
-+"title : 'Success',"
-+"text : 'Your password is successfully changed',"
-+"type : 'success',"
-+"showCancelButton : true,"
-+"closeOnConfirm : true,"
-+"confirmButtonText : 'OK!',"
-+"confirmButtonColor : 'green'"
-+"},"
-+ "function(){"
-+ "window.location.href = 'http://localhost:8002/xmlparser2/test.html'"
-+ "});"
-+ "</script>";
+
+	@Path("/fulljsontofullxml")
+	@GET
+	@Produces(MediaType.APPLICATION_XML)
+	public Response fulljsontofullxml() {
+		JSONObject jObject = new JSONObject();
+		JSONArray jArrays = new JSONArray();
+		try {
+
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohit@crosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			Statement st = con.createStatement();
+			JSONObject jObjects = new JSONObject();
+			ResultSet rs1 = st.executeQuery("select * from emp_details_basic");
+			while (rs1.next()) {
+				jObjects.put("name_type", rs1.getString("NAME_TYPE"));
+				jObjects.put("first_name", rs1.getString("FIRST_NAME"));
+				jObjects.put("last_name", rs1.getString("LAST_NAME"));
+			}
+			ResultSet rs2 = st.executeQuery("select * from emp_details_address");
+			while (rs2.next()) {
+				jObjects.put("addr2", rs2.getString("ADDRESS2"));
+				jObjects.put("addr3", rs2.getString("ADDRESS3"));
+				jObjects.put("addr4", rs2.getString("ADDRESS4"));
+				jObjects.put("country", rs2.getString("COUNTRY"));
+				jObjects.put("state", rs2.getString("STATE"));
+				jObjects.put("city", rs2.getString("CITY"));
+				jObjects.put("postal", rs2.getString("POSTAL"));
+			}
+			ResultSet rs3 = st.executeQuery("select * from emp_details_contact");
+			while (rs3.next()) {
+				jObjects.put("country_code", rs3.getString("COUNTRY_CODE"));
+				jObjects.put("phone", rs3.getString("PHONE"));
+				jObjects.put("email", rs3.getString("EMAIL_ADDR"));
+			}
+			ResultSet rs4 = st.executeQuery("select * from emp_details_basic_2");
+			while (rs4.next()) {
+				jObjects.put("exp_year", rs4.getString("J_EXP_YEAR"));
+				jObjects.put("exp_month", rs4.getString("J_EXP_MONTH"));
+				jObjects.put("post_grad", rs4.getString("J_POST_GRID"));
+				jObjects.put("grad", rs4.getString("J_GRADUATION"));
+				jObjects.put("industry", rs4.getString("J_INDUSTRY"));
+				jObjects.put("functional_area", rs4.getString("J_FUNCTIONAL_AREA"));
+			}
+			ResultSet rs5 = st.executeQuery("select * from emp_details_works");
+			JSONObject work_details = new JSONObject();
+			JSONArray jjobjects = new JSONArray();
+			while (rs5.next()) {
+				JSONObject jObjects_work = new JSONObject();
+				jObjects_work.put("company", rs5.getString("EMPLOYER"));
+				jObjects_work.put("jobtitle", rs5.getString("ENDING_TITLE"));
+				jObjects_work.put("start_date", rs5.getString("START_DT"));
+				jObjects_work.put("end_date", rs5.getString("END_DT"));
+				jObjects_work.put("salary", rs5.getString("J_CURRENT_SALARY"));
+				jObjects_work.put("currency", rs5.getString("CURRENCY"));
+				jjobjects.put(jObjects_work);
+				work_details.put("work", jjobjects);
+			}
+			ResultSet rs6 = st.executeQuery("select * from emp_details_edu");
+			JSONObject edu_details = new JSONObject();
+			JSONArray jjobject = new JSONArray();
+			while (rs6.next()) {
+
+				JSONObject objedu = new JSONObject();
+				objedu.put("cat_type", rs6.getString("JPM_CAT_TYPE"));
+				objedu.put("institution", rs6.getString("SCHOOL_CODE"));
+				objedu.put("passing_year", rs6.getString("JPM_INTEGER_2"));
+				objedu.put("country_edu", rs6.getString("COUNTRY_EDU"));
+				objedu.put("course_type", rs6.getString("TYPE_OF_STUDY_GER"));
+				objedu.put("degree", rs6.getString("JPM_CAT_ITEM_ID"));
+				objedu.put("branch", rs6.getString("MAJOR_CODE"));
+				objedu.put("cgpa", rs6.getString("JPM_DECIMAL_1"));
+				jjobject.put(objedu);
+				edu_details.put("edu", jjobject);
+
+			}
+			jObject.put("work_details", work_details);
+			jObject.put("edu_details", edu_details);
+			jObject.put("basic", jObjects);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(jObject.toString());
+		String str = jObject.toString();
+		JSONObject json = new JSONObject(str);
+		String xml = XML.toString(json);
+		System.out.println(xml);
+		return Response.status(200).entity(jObject.toString()).build();
+	}
+
+	@Path("/job_description/{code}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response job_description(@PathParam("code") int code) {
+		JSONArray jArray = new JSONArray();
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery("select * from job_openings where JobOpeningId='" + code + "'");
+			while (rs.next()) {
+
+				JSONObject jObject = new JSONObject();
+
+				jObject.put("job_title", rs.getString("job_title"));
+				jObject.put("jobdescr", rs.getString("jobdescr"));
+				jObject.put("locationdescr", rs.getString("locationdescr"));
+				jObject.put("buisnessunit", rs.getString("buisnessunit"));
+				jObject.put("deptdescr", rs.getString("deptdescr"));
+				jObject.put("country", rs.getString("country"));
+				jObject.put("companydescr", rs.getString("companydescr"));
+				jObject.put("function", rs.getString("funct"));
+				jObject.put("buisness", rs.getString("buisness"));
+				jObject.put("jobpostingdate", rs.getString("jobpostingdate"));
+				jArray.put(jObject);
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(jArray.toString());
+
+		return Response.status(200).entity(jArray.toString()).build();
+
 	}
 }

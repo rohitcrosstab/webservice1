@@ -1,16 +1,160 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<company>
-  <staff id="1">
-    <firstname>yong</firstname>
-    <lastname>mook kim</lastname>
-    <nickname>mkyong</nickname>
-    <salary>199999</salary>
-  </staff>
-  <staff id="2">
-    <firstname>low</firstname>
-    <lastname>yin fong</lastname>
-    <nickname>fong fong</nickname>
-    <salary>188888</salary>
-  </staff>
-</company>
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<work_details>
+	<work>
+		<end_date>2018-03-07</end_date>
+		<jobtitle>full stack</jobtitle>
+		<company>crosstab</company>
+		<currency />
+		<salary>70000000</salary>
+		<start_date>2018-03-14</start_date>
+	</work>
+	<work>
+		<end_date>1900-01-01</end_date>
+		<jobtitle />
+		<company />
+		<currency />
+		<salary />
+		<start_date>1900-01-01</start_date>
+	</work>
+	<work>
+		<end_date>1900-01-01</end_date>
+		<jobtitle />
+		<company />
+		<currency />
+		<salary />
+		<start_date>1900-01-01</start_date>
+	</work>
+	<work>
+		<end_date>1900-01-01</end_date>
+		<jobtitle />
+		<company />
+		<currency />
+		<salary />
+		<start_date>1900-01-01</start_date>
+	</work>
+	<work>
+		<end_date>1900-01-01</end_date>
+		<jobtitle />
+		<company />
+		<currency />
+		<salary />
+		<start_date>1900-01-01</start_date>
+	</work>
+	<work>
+		<end_date>1900-01-01</end_date>
+		<jobtitle />
+		<company />
+		<currency />
+		<salary />
+		<start_date>1900-01-01</start_date>
+	</work>
+	<work>
+		<end_date>1900-01-01</end_date>
+		<jobtitle />
+		<company />
+		<currency />
+		<salary />
+		<start_date>1900-01-01</start_date>
+	</work>
+	<work>
+		<end_date>1900-01-01</end_date>
+		<jobtitle />
+		<company />
+		<currency />
+		<salary />
+		<start_date>1900-01-01</start_date>
+	</work>
+</work_details>
+<edu_details>
+	<edu>
+		<passing_year>1900-01-01</passing_year>
+		<institution>Option1</institution>
+		<course_type>option1</course_type>
+		<cat_type>EDUC_QUAL</cat_type>
+		<degree />
+		<cgpa />
+		<branch />
+		<country_edu>-1</country_edu>
+	</edu>
+	<edu>
+		<passing_year>1900-01-01</passing_year>
+		<institution>Option1</institution>
+		<course_type>option1</course_type>
+		<cat_type>EDUC_QUAL</cat_type>
+		<degree />
+		<cgpa />
+		<branch />
+		<country_edu>-1</country_edu>
+	</edu>
+	<edu>
+		<passing_year>1900-01-01</passing_year>
+		<institution>Option1</institution>
+		<course_type>option1</course_type>
+		<cat_type>EDUC_QUAL</cat_type>
+		<degree />
+		<cgpa />
+		<branch />
+		<country_edu>-1</country_edu>
+	</edu>
+	<edu>
+		<passing_year>1900-01-01</passing_year>
+		<institution>Option1</institution>
+		<course_type>option1</course_type>
+		<cat_type>EDUC_QUAL</cat_type>
+		<degree />
+		<cgpa />
+		<branch />
+		<country_edu>-1</country_edu>
+	</edu>
+	<edu>
+		<passing_year>1900-01-01</passing_year>
+		<institution>Option1</institution>
+		<course_type>option1</course_type>
+		<cat_type>EDUC_QUAL</cat_type>
+		<degree />
+		<cgpa />
+		<branch />
+		<country_edu>-1</country_edu>
+	</edu>
+	<edu>
+		<passing_year>2018-03-06</passing_year>
+		<institution>Option2</institution>
+		<course_type>option1</course_type>
+		<cat_type>EDUC_QUAL</cat_type>
+		<degree>option1</degree>
+		<cgpa>98</cgpa>
+		<branch />
+		<country_edu>India</country_edu>
+	</edu>
+	<edu>
+		<passing_year>2018-03-06</passing_year>
+		<institution>Option2</institution>
+		<course_type>option1</course_type>
+		<cat_type>EDUC_QUAL</cat_type>
+		<degree>option1</degree>
+		<cgpa>98</cgpa>
+		<branch />
+		<country_edu>India</country_edu>
+	</edu>
+</edu_details>
+<basic>
+	<country>India</country>
+	<addr2>nagar</addr2>
+	<name_type>mr</name_type>
+	<city>1</city>
+	<addr4 />
+	<addr3>Kanpur</addr3>
+	<last_name>gupta</last_name>
+	<exp_month>4</exp_month>
+	<industry>Electrical/ Switchgears</industry>
+	<exp_year>6</exp_year>
+	<functional_area>Security</functional_area>
+	<post_grad>Master of Forest Management(MFM)</post_grad>
+	<country_code>+91</country_code>
+	<phone>9887876678</phone>
+	<state />
+	<postal>208012</postal>
+	<first_name>Rohit </first_name>
+	<email>rohit@gmail.com</email>
+	<grad>Bachelor of Science (BSC)</grad>
+</basic>
