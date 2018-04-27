@@ -355,40 +355,36 @@ public class test {
 
 	}
 
-/*	@Path("/insertdb1")
-	@POST
-
-	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
-			MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
-	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.TEXT_HTML })
-	public Response addUser3(@FormDataParam("myfiles") InputStream fileInputStream,
-			@FormDataParam("myfiles") FormDataContentDisposition fileInputDetails) {
-		try {
-			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			String connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" + "database=jubilant;" + "user=sa;"
-					+ "password=rohit@crosstab";
-			Connection con = DriverManager.getConnection(connectionUrl);
-			System.out.println("Connected.");
-			String file = fileInputDetails.getFileName();
-			String lang = "eng";
-			String title = "test resume";
-			String sysfile = "jubilant";
-			String query = ("insert into emp_resumes(HRS_RESUME_TITLE,LANG_CD,ATTACHUSERFILE,ATTACHSYSFILENAME,RESUME_TEXT) VALUES(?,?,?,?,?)");
-			PreparedStatement pstmt = con.prepareStatement(query);
-
-			pstmt.setString(1, title);
-			pstmt.setString(2, lang);
-			pstmt.setString(3, file);
-			pstmt.setString(4, sysfile);
-			pstmt.setBinaryStream(5, fileInputStream);
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Response.status(200).entity("Data is uploaded successfully to sqlexpress database").build();
-	}
-*/
+	/*
+	 * @Path("/insertdb1")
+	 * 
+	 * @POST
+	 * 
+	 * @Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA,
+	 * MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+	 * MediaType.TEXT_HTML })
+	 * 
+	 * @Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
+	 * MediaType.APPLICATION_XML, MediaType.TEXT_HTML }) public Response
+	 * addUser3(@FormDataParam("myfiles") InputStream fileInputStream,
+	 * 
+	 * @FormDataParam("myfiles") FormDataContentDisposition fileInputDetails) {
+	 * try { Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+	 * String connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" +
+	 * "database=jubilant;" + "user=sa;" + "password=rohit@crosstab"; Connection
+	 * con = DriverManager.getConnection(connectionUrl);
+	 * System.out.println("Connected."); String file =
+	 * fileInputDetails.getFileName(); String lang = "eng"; String title =
+	 * "test resume"; String sysfile = "jubilant"; String query =
+	 * ("insert into emp_resumes(HRS_RESUME_TITLE,LANG_CD,ATTACHUSERFILE,ATTACHSYSFILENAME,RESUME_TEXT) VALUES(?,?,?,?,?)"
+	 * ); PreparedStatement pstmt = con.prepareStatement(query);
+	 * 
+	 * pstmt.setString(1, title); pstmt.setString(2, lang); pstmt.setString(3,
+	 * file); pstmt.setString(4, sysfile); pstmt.setBinaryStream(5,
+	 * fileInputStream); pstmt.executeUpdate(); } catch (Exception e) {
+	 * e.printStackTrace(); } return Response.status(200).
+	 * entity("Data is uploaded successfully to sqlexpress database").build(); }
+	 */
 	@Path("/jubilant/emp_details_registration")
 	@POST
 	@Produces(MediaType.TEXT_HTML)
@@ -783,7 +779,7 @@ public class test {
 						+ rs.getString("quote") + "</td>"
 						+ " <td><button type='button'data-toggle='modal' data-target='#myModal' class='edit' onclick=\"edit_row('"
 						+ rs.getString(1)
-						+ "');\"><i class='fa fa-pencil'></i></button>&amp;nbsp;&amp;nbsp;&amp;nbsp;<button type='button' class='edits'onclick=\"delete_row('"
+						+ "');\"><i class='fa fa-pencil'></i></button>&nbsp;&nbsp;&nbsp;<button type='button' class='edits'onclick=\"delete_row('"
 						+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
 
 			}
@@ -1133,13 +1129,15 @@ public class test {
 				while (rs1.next()) {
 					content += "<tr class='tbl-item'><td class='title'><a href='http://localhost:8002/xmlparser2/job_description.html?job_code="
 							+ rs1.getString("JobOpeningId")
-							+ "'><span class='modalTrigger' style='cursor: pointer;  color: #004d99;'>" + ""
+							+ "'><span class='' style='cursor: pointer;  color: #004d99;'>" + ""
 							+ rs1.getString("JobOpeningId") + "</span></a></td>" + "<td class='title'>"
 							+ rs1.getString("Job_title") + "</td>" + "<td class='" + rs1.getString("output2") + " '>"
 							+ rs1.getString("output2") + "</td>" + "<td class='" + rs1.getString("output1") + "'>"
 							+ rs1.getString("output1") + "</td>" + "<td class='" + rs1.getString("buisness") + "'>"
 							+ rs1.getString("buisness") + "</td>"
-							+ "<td><a href='#' data-toggle='modal' data-target='#myModal'><span class='modalTrigger' style='cursor: pointer; text-decoration: underline; color: #004d99;'>"
+							+ "<td><a href='http://localhost:8002/xmlparser2/job_description.html?job_code="
+							+ rs1.getString("JobOpeningId") + "'>"
+							+ "<span class='' style='cursor: pointer; text-decoration: underline; color: #004d99;'>"
 							+ "<i class='fa fa-paper-plane'></i>&nbsp;Apply</span></a><br><a href='#' data-toggle='modal' data-target='#emailModal'><span style='cursor: pointer; text-decoration: underline; color: #80bb2d;'>"
 							+ "<i class='fa fa-envelope'></i>&nbsp;Refer a friend</span></a></td></tr>)";
 
@@ -1255,72 +1253,143 @@ public class test {
 
 	}
 
-	/*
-	 * @Path("/consultant_table")
-	 * 
-	 * @POST
-	 * 
-	 * @Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA,
-	 * MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-	 * MediaType.TEXT_HTML })
-	 * 
-	 * @Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
-	 * MediaType.APPLICATION_XML, MediaType.TEXT_HTML }) public Response
-	 * consul(@FormDataParam("photofiles") InputStream fileInputStream,
-	 * 
-	 * @FormDataParam("myfiles") FormDataContentDisposition fileInputDetails,
-	 * 
-	 * @FormDataParam("enames") String enames, @FormDataParam("equote") String
-	 * equote) { try {
-	 * Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); String
-	 * connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" +
-	 * "database=practice;" + "user=sa;" + "password=rohit@crosstab"; Connection
-	 * con = DriverManager.getConnection(connectionUrl);
-	 * System.out.println("Connected."); String query =
-	 * ("insert into testinomial(emp_name,emp_quote,photo) VALUES(?,?,?)");
-	 * PreparedStatement pstmt = con.prepareStatement(query); pstmt.setString(1,
-	 * enames); pstmt.setString(2, equote);
-	 * 
-	 * pstmt.setBinaryStream(3, fileInputStream);
-	 * 
-	 * pstmt.executeUpdate(); } catch (Exception e) { e.printStackTrace(); }
-	 * return Response.status(200).
-	 * entity("testinomial is uploaded successfully to sqlexpress database").
-	 * build(); }
-	 * 
-	 * @Path("consul_delete/{id}")
-	 * 
-	 * @GET
-	 * 
-	 * @Produces(MediaType.TEXT_HTML) public String consul2(@PathParam("id") int
-	 * id) { String content = null; try {
-	 * Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); String
-	 * connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" +
-	 * "database=jubilant;" + "user=sa;" + "password=rohitcrosstab";
-	 * 
-	 * Connection con = DriverManager.getConnection(connectionUrl);
-	 * System.out.println("Connected."); PreparedStatement stmt =
-	 * con.prepareStatement("delete from consultant_emp_speak where id=" + id);
-	 * stmt.executeUpdate(); String query =
-	 * ("select * from consultant_emp_speak"); Statement pstmt =
-	 * con.createStatement(); ResultSet rs = pstmt.executeQuery(query); while
-	 * (rs.next()) {
-	 * 
-	 * byte[] bytes = rs.getBytes("image"); byte[] encoded =
-	 * Base64.encodeBase64(bytes); String encodedString = new String(encoded);
-	 * content += "<tr> " + "<td class='1'><img src='data:image/jpeg;base64," +
-	 * encodedString + "' width='100px' height='100px' alt=''/></td>" +
-	 * "<td class='2'>" + rs.getString("name") + "</td>" + "<td class='3'>" +
-	 * rs.getString("designation") + "<td class='4'>" + rs.getString("quote") +
-	 * "</td>" +
-	 * " <td><button type='button' class='edit'data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"
-	 * + rs.getString(1) +
-	 * "');\"><i class='fa fa-pencil'></i></button>&amp;nbsp;&amp;nbsp;&amp;nbsp;<button type='button' class='edits'onclick=\"delete_row('"
-	 * + rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>" +
-	 * "</tr>";
-	 * 
-	 * } } catch (Exception e) { e.printStackTrace(); } return content; }
-	 */
+	@Path("/consultant_table")
+
+	@POST
+
+	@Produces(MediaType.TEXT_HTML)
+	public String consul(@FormParam("source") String source, @FormParam("email") String email,
+			@FormParam("pass") String pass, @FormParam("status") String status) {
+		String content = "";
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			String query = ("insert into emp_handler(SOURCE_ID,EMAIL_ADDR,PASSWORD,STATUS) VALUES(?,?,?,?)");
+			PreparedStatement pstmt = con.prepareStatement(query);
+			pstmt.setString(1, source);
+			pstmt.setString(2, email);
+			pstmt.setString(3, pass);
+			pstmt.setString(4, status);
+			pstmt.executeUpdate();
+			String querys = ("select * from emp_handler");
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(querys);
+			while (rs.next()) {
+				content += "<tr> " + "<td class='1'>" + rs.getString("SOURCE_ID") + "</td>" + "<td class='2'>"
+						+ rs.getString("EMAIL_ADDR") + "</td>" + "<td class='3'>" + rs.getString("PASSWORD")
+						+ "<td class='4'>" + rs.getString("STATUS")
+						+ "</td><td><td><select class='form-control'style='width:100%'id='update'onchange='update("
+						+ rs.getString(1) + ")'><option val=''>Please Select</option><option value='enable'>Enable</option><option value='disable'>Disable</option><select></td>"
+						+ "<td><button type='button' class='edits'onclick=\"delete_row(" + rs.getString(1)
+						+ ");\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return content;
+	}
+
+	@Path("/consultant_tabledata")
+
+	@GET
+
+	@Produces(MediaType.TEXT_HTML)
+	public String consuldata() {
+		String content = "";
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			String querys = ("select * from emp_handler");
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(querys);
+			while (rs.next()) {
+				content += "<tr> " + "<td class='1'>" + rs.getString("SOURCE_ID") + "</td>" + "<td class='2'>"
+						+ rs.getString("EMAIL_ADDR") + "</td>" + "<td class='3'>" + rs.getString("PASSWORD")
+						+ "<td class='4'>" + rs.getString("STATUS")
+						+ "</td><td><select class='form-control'onchange='update(" + rs.getString(1)
+						+ ");'id='update'style='width:100%'><option>Please Select</option><option>Enable</option><option>Disable</option><select></td>"
+						+ "<td><button type='button' class='edits'onclick=\"delete_rows('" + rs.getString(1)
+						+ "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return content;
+	}
+
+	@Path("consul_delete/{id}")
+
+	@GET
+
+	@Produces(MediaType.TEXT_HTML)
+	public String consul21(@PathParam("id") int id) {
+		String content = null;
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			PreparedStatement stmt = con.prepareStatement("delete from emp_handler where USER_ID=" + id);
+			stmt.executeUpdate();
+			String query = ("select * from emp_handler");
+			Statement pstmt = con.createStatement();
+			ResultSet rs = pstmt.executeQuery(query);
+			while (rs.next()) {
+				content += "<tr> " + "<td class='1'>" + rs.getString("SOURCE_ID") + "</td>" + "<td class='2'>"
+						+ rs.getString("EMAIL_ADDR") + "</td>" + "<td class='3'>" + rs.getString("PASSWORD") + "</td>"
+						+ "<td class='4'>" + rs.getString("STATUS")
+						+ "</td><td><select class='form-control'style='width:100%'id='update'onchange='update("
+						+ rs.getString(1) + ")'><option>Please Select</option><option>Enable</option><option>Disable</option><select></td>"
+						+ "<td><button type='button' class='edits'onclick=\"delete_rows('" + rs.getString(1)
+						+ "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return content;
+	}
+
+	@Path("consul_enable/{id}")
+
+	@GET
+
+	@Produces(MediaType.TEXT_HTML)
+	public String consul22(@PathParam("id") int id, @QueryParam("status") String status) {
+		String content = null;
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			PreparedStatement stmt = con
+					.prepareStatement("update emp_handler set STATUS = '" + status + "' where USER_ID='" + id + "'");
+			stmt.executeUpdate();
+			String query = ("select * from emp_handler");
+			Statement pstmt = con.createStatement();
+			ResultSet rs = pstmt.executeQuery(query);
+			while (rs.next()) {
+				content += "<tr> " + "<td class='1'>" + rs.getString("SOURCE_ID") + "</td>" + "<td class='2'>"
+						+ rs.getString("EMAIL_ADDR") + "</td>" + "<td class='3'>" + rs.getString("PASSWORD") + "</td>"
+						+ "<td class='4'>" + rs.getString("STATUS")
+						+ "</td><td><select class='form-control'style='width:100%'id='update'onchange='update("
+						+ rs.getString(1) + ")'><option val=''>Please Select</option><option value='enable'>Enable</option><option value='disable'>Disable</option><select></td>"
+						+ "<td><button type='button' class='edits'onclick=\"delete_rows('" + rs.getString(1)
+						+ "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return content;
+	}
+
 	@Path("testinomial_delete/{id}")
 	@GET
 
@@ -1350,7 +1419,7 @@ public class test {
 						+ rs.getString("quote") + "</td>"
 						+ " <td><button type='button' class='edit'data-toggle='modal' data-target='#myModal' onclick=\"edit_row('"
 						+ rs.getString(1)
-						+ "');\"><i class='fa fa-pencil'></i></button>&amp;nbsp;&amp;nbsp;&amp;nbsp;<button type='button' class='edits'onclick=\"delete_row('"
+						+ "');\"><i class='fa fa-pencil'></i></button>&nbsp;&nbsp;&nbsp;<button type='button' class='edits'onclick=\"delete_row('"
 						+ rs.getString(1) + "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
 
 			}
@@ -1522,8 +1591,6 @@ public class test {
 			e.printStackTrace();
 		}
 		System.out.println(jArray.toString());
-
 		return Response.status(200).entity(jArray.toString()).build();
-
 	}
 }
