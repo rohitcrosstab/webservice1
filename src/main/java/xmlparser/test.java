@@ -300,8 +300,8 @@ public class test {
 	@Path("/jubilant/emp_details_login")
 	@POST
 
-	@Produces(MediaType.TEXT_HTML)
-	public Response addUser2(@FormParam("email") String email, @FormParam("pwd") String pass) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public String addUser2(@FormParam("email") String email, @FormParam("pwd") String pass) {
 		try {
 			Date date = Calendar.getInstance().getTime();
 
@@ -309,10 +309,18 @@ public class test {
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			String today = formatter.format(date);
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			String connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" + "database=jubilant;" + "user=sa;"
-					+ "password=rohit@crosstab";
+			String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohitcrosstab";
 			Connection con = DriverManager.getConnection(connectionUrl);
 			System.out.println("Connected.");
+			String query=("Select * from emp_details_login where EMAIL_ADDR='" + email + "'");
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			if(rs.next()){
+				return "<script>" + "swal({" + "title : 'Sorry'," + "text : 'Your email is already exist!!!',"
+						+ "type : 'warning'," + "showCancelButton : true," + "closeOnConfirm : true,"
+						+ "confirmButtonText : 'OK!'," + "confirmButtonColor : '#ec6c62'" + "});" + "</script>";
+			}else{
 			String query1 = ("insert into emp_details_login(EMAIL_ADDR,PSWD,REG_DATE) VALUES(?,?,?)");
 			// String query = ("insert into
 			// emp_details_login(EMAIL_ADDR,PSWD,REG_DATE) VALUES(?,?,?)");
@@ -321,10 +329,14 @@ public class test {
 			pstmt.setString(2, pass);
 			pstmt.setString(3, today);
 			pstmt.executeUpdate();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return Response.status(200).entity("Data is uploaded successfully to sqlexpress database").build();
+		return "<script>" + "swal({" + "title : 'Success'," + "text : 'Your id is registered',"
+						+ "type : 'warning'," + "showCancelButton : true," + "closeOnConfirm : true,"
+						+ "confirmButtonText : 'OK!'," + "confirmButtonColor : '#ec6c62'" + "});" + "</script>";
+		
 
 	}
 
@@ -355,36 +367,43 @@ public class test {
 
 	}
 
-	/*
-	 * @Path("/insertdb1")
-	 * 
-	 * @POST
-	 * 
-	 * @Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA,
-	 * MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-	 * MediaType.TEXT_HTML })
-	 * 
-	 * @Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
-	 * MediaType.APPLICATION_XML, MediaType.TEXT_HTML }) public Response
-	 * addUser3(@FormDataParam("myfiles") InputStream fileInputStream,
-	 * 
-	 * @FormDataParam("myfiles") FormDataContentDisposition fileInputDetails) {
-	 * try { Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-	 * String connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" +
-	 * "database=jubilant;" + "user=sa;" + "password=rohit@crosstab"; Connection
-	 * con = DriverManager.getConnection(connectionUrl);
-	 * System.out.println("Connected."); String file =
-	 * fileInputDetails.getFileName(); String lang = "eng"; String title =
-	 * "test resume"; String sysfile = "jubilant"; String query =
-	 * ("insert into emp_resumes(HRS_RESUME_TITLE,LANG_CD,ATTACHUSERFILE,ATTACHSYSFILENAME,RESUME_TEXT) VALUES(?,?,?,?,?)"
-	 * ); PreparedStatement pstmt = con.prepareStatement(query);
-	 * 
-	 * pstmt.setString(1, title); pstmt.setString(2, lang); pstmt.setString(3,
-	 * file); pstmt.setString(4, sysfile); pstmt.setBinaryStream(5,
-	 * fileInputStream); pstmt.executeUpdate(); } catch (Exception e) {
-	 * e.printStackTrace(); } return Response.status(200).
-	 * entity("Data is uploaded successfully to sqlexpress database").build(); }
-	 */
+	@Path("/insertdb1")
+
+	@POST
+
+	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
+
+	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.TEXT_HTML })
+	public Response addUser3(@FormDataParam("myfiles") InputStream fileInputStream,
+
+			@FormDataParam("myfiles") FormDataContentDisposition fileInputDetails) {
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionUrl = "jdbc:sqlserver://localhost\\MYSQLEXPRESS;" + "database=jubilant;" + "user=sa;"
+					+ "password=rohit@crosstab";
+			Connection con = DriverManager.getConnection(connectionUrl);
+			System.out.println("Connected.");
+			String file = fileInputDetails.getFileName();
+			String lang = "eng";
+			String title = "test resume";
+			String sysfile = "jubilant";
+			String query = ("insert into emp_resumes(HRS_RESUME_TITLE,LANG_CD,ATTACHUSERFILE,ATTACHSYSFILENAME,RESUME_TEXT) VALUES(?,?,?,?,?)");
+			PreparedStatement pstmt = con.prepareStatement(query);
+
+			pstmt.setString(1, title);
+			pstmt.setString(2, lang);
+			pstmt.setString(3, file);
+			pstmt.setString(4, sysfile);
+			pstmt.setBinaryStream(5, fileInputStream);
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Response.status(200).entity("Data is uploaded successfully to sqlexpress database").build();
+	}
+
 	@Path("/jubilant/emp_details_registration")
 	@POST
 	@Produces(MediaType.TEXT_HTML)
@@ -418,7 +437,11 @@ public class test {
 
 	@Path("/jubilant/emp_draft")
 	@POST
-	@Produces(MediaType.TEXT_HTML)
+	@Produces({ MediaType.TEXT_HTML, MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON,
+		MediaType.APPLICATION_XML, MediaType.TEXT_HTML })
+
+@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+		MediaType.TEXT_HTML })
 
 	public Response addUser45(@FormParam("title") String title, @FormParam("fname") String fname,
 			@FormParam("lname") String lname, @FormParam("addr1") String addr1, @FormParam("addr2") String addr2,
@@ -435,7 +458,8 @@ public class test {
 			@FormParam("institutename") String institute, @FormParam("passingyear") String passyear,
 			@FormParam("course_type") String coursetype, @FormParam("country") String countryedu,
 			@FormParam("degree") String degree, @FormParam("branch") String branch, @FormParam("score") String cgpa,
-			@FormParam("edu_jobject") String edu_jobject, @FormParam("work_jobject") String work_jobject) {
+			@FormParam("edu_jobject") String edu_jobject, @FormParam("work_jobject") String work_jobject,
+			@FormDataParam("myfiles") InputStream fileInputStream,@FormDataParam("myfiles") FormDataContentDisposition fileInputDetails) {
 
 		try {
 
@@ -552,6 +576,19 @@ public class test {
 				pstmt6.setString(10, catt);
 				pstmt6.executeUpdate();
 			}
+			String file = fileInputDetails.getFileName();
+			String lang = "eng";
+			String titless = "test resume";
+			String sysfile = "jubilant";
+			String query = ("insert into emp_resumes(HRS_RESUME_TITLE,LANG_CD,ATTACHUSERFILE,ATTACHSYSFILENAME,RESUME_TEXT) VALUES(?,?,?,?,?)");
+			PreparedStatement pstmt = con.prepareStatement(query);
+
+			pstmt.setString(1, titless);
+			pstmt.setString(2, lang);
+			pstmt.setString(3, file);
+			pstmt.setString(4, sysfile);
+			pstmt.setBinaryStream(5, fileInputStream);
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1179,7 +1216,7 @@ public class test {
 				+ "<table class='demo-tbl' style='border: 2px solid #eeeeee;'> <!-- one more panel section --> <thead class='jplist-panel'> <tr data-control-type='sort-buttons-group' data-control-name='header-sort-buttons' data-control-action='sort' data-mode='single' data-datetime-format='{month}/{day}/{year}'>"
 				+ " <th width='10%'><span class='header' style='cursor: pointer'>Job Code</span></th> <th width='15%'><span class='header' style='cursor: pointer'>Job Title</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Location</span></th> <th width='20%'><span class='header' style='cursor: pointer'>Function</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Business</span></th> <th width='8%'><span class='header'>Apply</span></th> </tr> </thead>"
 				+ " <tbody id='jobpostingsBody'> </tbody>" + content + " </table> </div>"
-				+ " <div class='jplist-no-results text-shadow align-center' style='padding-top: 60px; color: #000;'> <p> <i class='fa fa-warning'></i>  No job-postings found. </p> </div> <div class='jplist-panel panel-bottom'> <div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'> <ul style='color: #000; width: 100%;'> <li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li> <li><span data-number='10'> 10 per page </span></li> <li><span data-number='all'> View All </span></li> </ul> </div> <div class='jplist-label' data-type='{start} - {end} of {all}' data-control-type='pagination-info' data-control-name='paging' data-control-action='paging' style='font-size: 14px; font-weight: bold; border-radius: 30px;'></div> <div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'></div> </div>";
+				+ " <div class='jplist-no-results text-shadow align-center' style='padding-top: 60px; color: #000;'> <p> <i class='fa fa-warning'></i>  No job-postings found. </p> </div> <div class='jplist-panel panel-bottom'> <div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'> <ul style='color: #000; width: 100%;'> <li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li> <li><span data-number='10'> 10 per page </span></li> <li><span data-number='all'> View All </span></li> </ul> </div> <div class='jplist-label' data-type='{start} - {end} of {all}' data-control-type='pagination-info' data-control-name='paging' data-control-action='paging' style='font-size: 14px; font-weight: bold; border-radius: 30px;'></div> <div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'></div> </div>";
 
 	}
 
@@ -1249,7 +1286,7 @@ public class test {
 				+ "<table class='demo-tbl' style='border: 2px solid #eeeeee;'> <!-- one more panel section --> <thead class='jplist-panel'> <tr data-control-type='sort-buttons-group' data-control-name='header-sort-buttons' data-control-action='sort' data-mode='single' data-datetime-format='{month}/{day}/{year}'>"
 				+ " <th width='10%'><span class='header' style='cursor: pointer'>Job Code</span></th> <th width='15%'><span class='header' style='cursor: pointer'>Job Title</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Location</span></th> <th width='20%'><span class='header' style='cursor: pointer'>Function</span></th> <th width='10%'><span class='header' style='cursor: pointer'>Business</span></th> <th width='8%'><span class='header'>Apply</span></th> </tr> </thead>"
 				+ " <tbody id='jobpostingsBody'> </tbody>" + content + " </table> </div>"
-				+ " <div class='jplist-no-results text-shadow align-center' style='padding-top: 60px; color: #000;'> <p> <i class='fa fa-warning'></i>  No job-postings found. </p> </div> <div class='jplist-panel panel-bottom'> <div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'> <ul style='color: #000; width: 100%;'> <li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li> <li><span data-number='10'> 10 per page </span></li> <li><span data-number='all'> View All </span></li> </ul> </div> <div class='jplist-label' data-type='{start} - {end} of {all}' data-control-type='pagination-info' data-control-name='paging' data-control-action='paging' style='font-size: 14px; font-weight: bold; border-radius: 30px;'></div> <div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'></div> </div>";
+				+ " <div class='jplist-no-results text-shadow align-center' style='padding-top: 60px; color: #000;'> <p> <i class='fa fa-warning'></i>  No job-postings found. </p> </div> <div class='jplist-panel panel-bottom'> <div class='jplist-drop-down' data-control-type='items-per-page-drop-down' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'> <ul style='color: #000; width: 100%;'> <li><span data-number='3' data-default='true'> 3 per page </span></li> <li><span data-number='5'> 5 per page </span></li> <li><span data-number='10'> 10 per page </span></li> <li><span data-number='all'> View All </span></li> </ul> </div> <div class='jplist-label' data-type='{start} - {end} of {all}' data-control-type='pagination-info' data-control-name='paging' data-control-action='paging' style='font-size: 14px; font-weight: bold; border-radius: 30px;'></div> <div class='jplist-pagination' data-control-type='pagination' data-control-name='paging' data-control-action='paging' data-control-animate-to-top='true'></div> </div>";
 
 	}
 
@@ -1282,7 +1319,8 @@ public class test {
 						+ rs.getString("EMAIL_ADDR") + "</td>" + "<td class='3'>" + rs.getString("PASSWORD")
 						+ "<td class='4'>" + rs.getString("STATUS")
 						+ "</td><td><td><select class='form-control'style='width:100%'id='update'onchange='update("
-						+ rs.getString(1) + ")'><option val=''>Please Select</option><option value='enable'>Enable</option><option value='disable'>Disable</option><select></td>"
+						+ rs.getString(1)
+						+ ")'><option val=''>Please Select</option><option value='enable'>Enable</option><option value='disable'>Disable</option><select></td>"
 						+ "<td><button type='button' class='edits'onclick=\"delete_row(" + rs.getString(1)
 						+ ");\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
 			}
@@ -1346,7 +1384,8 @@ public class test {
 						+ rs.getString("EMAIL_ADDR") + "</td>" + "<td class='3'>" + rs.getString("PASSWORD") + "</td>"
 						+ "<td class='4'>" + rs.getString("STATUS")
 						+ "</td><td><select class='form-control'style='width:100%'id='update'onchange='update("
-						+ rs.getString(1) + ")'><option>Please Select</option><option>Enable</option><option>Disable</option><select></td>"
+						+ rs.getString(1)
+						+ ")'><option>Please Select</option><option>Enable</option><option>Disable</option><select></td>"
 						+ "<td><button type='button' class='edits'onclick=\"delete_rows('" + rs.getString(1)
 						+ "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
 			}
@@ -1380,7 +1419,8 @@ public class test {
 						+ rs.getString("EMAIL_ADDR") + "</td>" + "<td class='3'>" + rs.getString("PASSWORD") + "</td>"
 						+ "<td class='4'>" + rs.getString("STATUS")
 						+ "</td><td><select class='form-control'style='width:100%'id='update'onchange='update("
-						+ rs.getString(1) + ")'><option val=''>Please Select</option><option value='enable'>Enable</option><option value='disable'>Disable</option><select></td>"
+						+ rs.getString(1)
+						+ ")'><option val=''>Please Select</option><option value='enable'>Enable</option><option value='disable'>Disable</option><select></td>"
 						+ "<td><button type='button' class='edits'onclick=\"delete_rows('" + rs.getString(1)
 						+ "');\"><i class='fa fa-trash-o'></i></button></td>" + "</tr>";
 			}
