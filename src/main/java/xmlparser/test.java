@@ -16,6 +16,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
@@ -33,6 +35,7 @@ import com.sun.jersey.multipart.FormDataParam;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Connection;
@@ -45,6 +48,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import javax.ws.rs.Path;
@@ -69,6 +74,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
@@ -1480,7 +1490,58 @@ public class test {
 				+ "'</script>";
 
 	}
+	
+	@POST
+	@Path("/uploadResume")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadResume(@Context HttpServletRequest request) throws UnsupportedEncodingException {
+String file="";
+String encodedfile = "";
+		if (ServletFileUpload.isMultipartContent( request)) {
+			FileItemFactory factory = new DiskFileItemFactory();
+			ServletFileUpload upload = new ServletFileUpload(factory);
+			List<FileItem> items = null;
+			try {
+				items = upload.parseRequest(request);
+			} catch (FileUploadException e) {
+				e.printStackTrace();
+			}
+			if (items != null) {
+				Iterator<FileItem> iter = items.iterator();
+				while (iter.hasNext()) {
+					FileItem item = iter.next();
+					if (!item.isFormField() && item.getSize() > 0) {
+						file = item.getName();
+						 encodedfile = new String(Base64.encodeBase64(item.get()), "UTF-8");
+						
+					}
+				}
+			}
+			try {
+				Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+				String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
+						+ "password=rohitcrosstab";
+				Connection con = DriverManager.getConnection(connectionUrl);
+				System.out.println("Connected.");
+		
+				String lang = "eng";
+				String title = "test resume";
+				String sysfile = "jubilant";
+				String query = ("insert into emp_resumes(HRS_RESUME_TITLE,LANG_CD,ATTACHUSERFILE,ATTACHSYSFILENAME,RESUME_TEXT) VALUES(?,?,?,?,?)");
+				PreparedStatement pstmt = con.prepareStatement(query);
 
+				pstmt.setString(1, title);
+				pstmt.setString(2, lang);
+				pstmt.setString(3, file);
+				pstmt.setString(4, sysfile);
+				pstmt.setString(5, encodedfile);
+				pstmt.executeUpdate();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return Response.status(200).entity("File recieved!").build();
+	}
 	@POST
 	@Path("/change_pass")
 	@Produces(MediaType.TEXT_HTML)
