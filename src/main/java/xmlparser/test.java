@@ -36,6 +36,7 @@ import com.sun.jersey.multipart.FormDataParam;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Connection;
@@ -66,11 +67,15 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import org.apache.commons.codec.binary.Base64;
@@ -1494,9 +1499,11 @@ public class test {
 	@POST
 	@Path("/uploadResume")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response uploadResume(@Context HttpServletRequest request) throws UnsupportedEncodingException {
+	@Produces(MediaType.APPLICATION_JSON)
+	public String uploadResume(@Context HttpServletRequest request) throws UnsupportedEncodingException {
 String file="";
 String encodedfile = "";
+String result="";
 		if (ServletFileUpload.isMultipartContent( request)) {
 			FileItemFactory factory = new DiskFileItemFactory();
 			ServletFileUpload upload = new ServletFileUpload(factory);
@@ -1506,6 +1513,7 @@ String encodedfile = "";
 			} catch (FileUploadException e) {
 				e.printStackTrace();
 			}
+		
 			if (items != null) {
 				Iterator<FileItem> iter = items.iterator();
 				while (iter.hasNext()) {
@@ -1517,7 +1525,8 @@ String encodedfile = "";
 					}
 				}
 			}
-			try {
+		}
+		try {
 				Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 				String connectionUrl = "jdbc:sqlserver://localhost\\SQLMYSERVER;" + "database=jubilant;" + "user=sa;"
 						+ "password=rohitcrosstab";
@@ -1539,8 +1548,64 @@ String encodedfile = "";
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			try{
+			URL url = new URL("https://eu-rest.resumeparsing.com/v8/parser/resume");
+			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+
+			// Properties in order to ensure succesful POST-request
+			connection.setUseCaches(false);
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+
+			// Specify request-method and headers
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/json");
+			connection.setRequestProperty("accept", "application/json");
+
+			// Specify your credentials
+			connection.setRequestProperty("Sovren-AccountId", "11305241");
+			connection.setRequestProperty("Sovren-ServiceKey", "GTz1UAs9Ak2fejjc3v9RCDm4pdMhyaNN/Akf/Gpc");
+
+			// Construct payload in JSON-format
+			// (This is a very primitive way to do so, as not to have any external dependencies 
+			//  feel free to use your preferred json-library)
+			String payload = "{ \"DocumentAsBase64String\": \"" + encodedfile + "\",\"OutputHtml\":true,\"Configuration\":\"Coverage.AddCertificationsAndLicensesToSkills = false; Coverage.AddLanguagesToSkills = false; Coverage.AddPositionTitlesToSkills = false; Coverage.EntryLevel = false; Coverage.FindSkillsInEntireDocument = false; Coverage.IgnoreCaseForSkills = false; Coverage.MilitaryHistoryAndSecurityCredentials = false; Coverage.PatentsPublicationsAndSpeakingEvents = false; Coverage.PersonalInformation = false; Coverage.Training = false; OutputFormat.CreateBullets = false; OutputFormat.DateOutputStyle = ExplicitlyKnownDateInfoOnly; OutputFormat.NormalizeRegions = false; OutputFormat.PreferShorterPositionTitles = false; OutputFormat.ReformatPositionHistoryDescription = false; OutputFormat.StripParsedDataFromPositionHistoryDescription = true; OutputFormat.TelcomNumber.Style = Raw; Culture.CountryCodeForUnitedKingdomIsUK = true; Culture.PreferEnglishVersionIfTwoLanguagesInDocument = false;\",\"NormalizerData\":\"builtin\"}";
+
+			// Send payload
+			DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+			outputStream.writeBytes(payload);
+			outputStream.flush();
+			outputStream.close();
+
+			// Read response
+			int responseCode = connection.getResponseCode();
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+			    response.append(inputLine);
+			}
+			
+			in.close();
+			
+		
+				JsonElement jelement = new JsonParser().parse(response.toString());
+				JsonObject jobjects = jelement.getAsJsonObject();
+				JsonObject jobject = jobjects.getAsJsonObject("Value");
+			
+			String data =jobject.get("ParsedDocument").getAsString();
+			JsonElement jelements = new JsonParser().parse(data);
+			JsonObject jobjects1 = jelements.getAsJsonObject();
+			JsonObject jobject1 = jobjects1.getAsJsonObject("Resume");
+			JsonObject jobject2 = jobject1.getAsJsonObject("StructuredXMLResume");
+			JsonObject jobject3 = jobject2.getAsJsonObject("ContactInfo");
+			 result=jobject3.toString();
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
 		}
-		return Response.status(200).entity("File recieved!").build();
+		return result;
 	}
 	@POST
 	@Path("/change_pass")
@@ -1694,4 +1759,6 @@ String encodedfile = "";
 		System.out.println(jArray.toString());
 		return Response.status(200).entity(jArray.toString()).build();
 	}
+	
 }
+
